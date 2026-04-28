@@ -22,7 +22,7 @@
         <div class="item-meta">
           <span>{{ item.categoryName }}</span>
           <span>•</span>
-          <span>{{ item.occurrenceDate }}</span>
+          <span>{{ dateFormat.toShortMonthDay(item.occurrenceDate) }}</span>
         </div>
       </div>
 
@@ -30,7 +30,7 @@
         type="button"
         class="complete-button"
         (click)="onMarkComplete(item)">
-        ✓
+        {{ getDayNumber(item) }}
       </button>
     </article>
     }
@@ -65,14 +65,14 @@
         <div class="overdue-item">
           <div>
             <strong>{{ item.taskName }}</strong>
-            <p>{{ item.categoryName }} • {{ item.occurrenceDate }}</p>
+            <p>{{ item.categoryName }} • {{ dateFormat.toWeekdayLongMonthOrdinal(item.occurrenceDate) }}</p>
           </div>
 
           <button
             type="button"
             class="mini-complete-button"
             (click)="onMarkComplete(item)">
-            ✓
+            {{ getDayNumber(item) }}
           </button>
         </div>
         }

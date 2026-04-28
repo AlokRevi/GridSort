@@ -25,6 +25,7 @@ import {
 } from '../../models/dashboard.models';
 
 import { DashboardApiService } from '../../services/dashboard-api.service';
+import { DateFormatService } from '../../services/date-format.service';
 import { TimelineStripComponent } from '../timeline-strip/timeline-strip.component';
 import { CategorySectionComponent } from '../category-section/category-section.component';
 import { TodayChecklistComponent } from '../today-checklist/today-checklist.component';
@@ -378,6 +379,7 @@ getCompletedTasksForCategory(categoryId: number): {
 
   constructor(
     private dashboardApi: DashboardApiService,
+    private dateFormat: DateFormatService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -521,7 +523,7 @@ getCompletedTasksForCategory(categoryId: number): {
   // Completion actions
   // --------------------------------
   onMarkComplete(event: { taskId: number; occurrenceDate: string }): void {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = this.dateFormat.toIsoDate();
 
     this.dashboardApi.completeTask(event.taskId, {
       occurrenceDate: event.occurrenceDate,

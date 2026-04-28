@@ -5,6 +5,7 @@ import {
   ChecklistItem,
   TodayChecklistResponse
 } from '../../models/dashboard.models';
+import { DateFormatService } from '../../services/date-format.service';
 
 @Component({
   selector: 'app-today-checklist',
@@ -24,6 +25,8 @@ export class TodayChecklistComponent {
 
   // Mobile/touch state for showing overdue list.
   overdueExpanded = false;
+
+  constructor(public dateFormat: DateFormatService) {}
 
   get dueTodayItems(): ChecklistItem[] {
     return this.checklist?.items.filter(item => item.status === 'DUE_TODAY') ?? [];
@@ -46,6 +49,10 @@ export class TodayChecklistComponent {
       taskId: item.taskId,
       occurrenceDate: item.occurrenceDate
     });
+  }
+
+  getDayNumber(item: ChecklistItem): number {
+    return this.dateFormat.getDayNumber(item.occurrenceDate);
   }
 
   trackByChecklistItem(index: number, item: ChecklistItem): string {
