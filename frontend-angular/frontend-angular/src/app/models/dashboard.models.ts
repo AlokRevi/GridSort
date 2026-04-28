@@ -30,6 +30,7 @@ export interface DayStripItem {
 export interface DashboardCategory {
   categoryId: number;
   categoryName: string;
+  categoryColor: string;
   tasks: DashboardTask[];
 }
 
@@ -63,7 +64,7 @@ export interface ChecklistItem {
   categoryId: number;
   categoryName: string;
   occurrenceDate: string;
-  status: 'DUE_TODAY' | 'OVERDUE';
+  status: 'DUE_TODAY' | 'OVERDUE' | 'COMPLETED';
 }
 
 // -------------------------------
@@ -131,6 +132,7 @@ export interface UpdateTaskRequest {
   recurrenceType: RecurrenceType;
   startDate: string;
   endDate: string | null;
+  isActive?: boolean;
   rule: TaskRuleRequest;
 }
 

@@ -2,7 +2,9 @@
   <p class="scroll-hint">Swipe sideways to see all month dates →</p>
 
   @for (category of sortedCategories; track trackByCategory($index, category)) {
-  <div class="category-block">
+  <div
+    class="category-block"
+    [style.border-color]="category.categoryColor || '#dbe3ef'">
     <h3 class="category-title">{{ category.categoryName }}</h3>
 
     @for (task of category.tasks; track trackByTask($index, task)) {
@@ -40,7 +42,11 @@
       <div class="occurrence-grid-wrap">
         <div class="occurrence-grid">
           @for (day of dayStrip; track trackByDay($index, day)) {
-          <div class="day-cell">
+          <div
+            class="day-cell"
+            [class.saturday]="day.weekday === 'SATURDAY'"
+            [class.sunday]="day.weekday === 'SUNDAY'"
+            [class.wednesday]="day.weekday === 'WEDNESDAY'">
             @let occurrence = getOccurrenceForDay(task, day);
 
             @if (occurrence) {

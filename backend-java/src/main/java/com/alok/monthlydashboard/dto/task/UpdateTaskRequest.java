@@ -26,7 +26,7 @@ public record UpdateTaskRequest(
 
         LocalDate endDate,
 
-        boolean isActive,
+        Boolean isActive,
 
         @Valid
         @NotNull

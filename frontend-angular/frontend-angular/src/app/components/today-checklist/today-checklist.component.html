@@ -3,7 +3,7 @@
   <div class="today-header">
     <div>
       <h2>Today Checklist</h2>
-      <p>{{ totalCount }} item(s)</p>
+      <p>{{ activeCount }} open · {{ completedTodayItems.length }} completed today</p>
     </div>
   </div>
 
@@ -28,7 +28,8 @@
 
       <button
         type="button"
-        class="complete-button"
+        class="date-action-button due-date-button"
+        [title]="'Mark complete for ' + item.occurrenceDate"
         (click)="onMarkComplete(item)">
         {{ getDayNumber(item) }}
       </button>
@@ -70,7 +71,8 @@
 
           <button
             type="button"
-            class="mini-complete-button"
+            class="date-action-button overdue-date-button"
+            [title]="'Mark complete for ' + item.occurrenceDate"
             (click)="onMarkComplete(item)">
             {{ getDayNumber(item) }}
           </button>
@@ -78,6 +80,31 @@
         }
       </div>
     </article>
+    }
+
+    @if (completedTodayItems.length > 0) {
+    <div class="completed-today-section">
+      <h3>Completed today</h3>
+
+      @for (item of completedTodayItems; track trackByChecklistItem($index, item)) {
+      <article class="checklist-row completed-row">
+        <div class="item-main">
+          <div class="item-title-line">
+            <strong>{{ item.taskName }}</strong>
+            <span class="status-pill status-completed">Completed</span>
+          </div>
+
+          <div class="item-meta">
+            <span>{{ item.categoryName }}</span>
+            <span>•</span>
+            <span>{{ dateFormat.toShortMonthDay(item.occurrenceDate) }}</span>
+          </div>
+        </div>
+
+        <div class="completed-indicator" title="Completed today">✓</div>
+      </article>
+      }
+    </div>
     }
   </div>
   }

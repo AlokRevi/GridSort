@@ -120,7 +120,8 @@ public class TaskServiceImpl implements TaskService {
         Task task = getTaskOrThrow(taskId);
         Category category = getCategoryOrThrow(request.categoryId());
 
-        boolean activatingInactiveTask = !task.isActive() && request.isActive();
+        boolean nextActiveState = request.isActive() == null ? task.isActive() : request.isActive();
+        boolean activatingInactiveTask = !task.isActive() && nextActiveState;
         if (activatingInactiveTask) {
             long activeCount = taskRepository.countByIsActive(true);
             if (activeCount >= MAX_ACTIVE_TASKS) {
@@ -134,7 +135,7 @@ public class TaskServiceImpl implements TaskService {
         task.setRecurrenceType(request.recurrenceType());
         task.setStartDate(request.startDate());
         task.setEndDate(request.endDate());
-        task.setActive(request.isActive());
+        task.setActive(nextActiveState);
 
         TaskRecurrenceRule rule = task.getRecurrenceRule();
         if (rule == null) {

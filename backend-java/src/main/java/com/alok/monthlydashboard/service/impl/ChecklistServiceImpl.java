@@ -22,6 +22,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -53,10 +54,20 @@ public class ChecklistServiceImpl implements ChecklistService {
             List<LocalDate> candidateDates = collectCandidateDates(task, today);
 
             for (LocalDate occurrenceDate : candidateDates) {
-                boolean alreadyCompleted = taskCompletionRepository
-                        .existsByTaskIdAndOccurrenceDate(task.getId(), occurrenceDate);
+                Optional<TaskCompletion> completion = taskCompletionRepository
+                        .findByTaskIdAndOccurrenceDate(task.getId(), occurrenceDate);
 
-                if (alreadyCompleted) {
+                if (completion.isPresent()) {
+                    if (today.equals(completion.get().getCompletionDate())) {
+                        items.add(new ChecklistItemResponse(
+                                task.getId(),
+                                task.getName(),
+                                task.getCategory().getId(),
+                                task.getCategory().getName(),
+                                occurrenceDate,
+                                OccurrenceStatus.COMPLETED
+                        ));
+                    }
                     continue;
                 }
 

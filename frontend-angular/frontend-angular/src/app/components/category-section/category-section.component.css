@@ -153,6 +153,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 6px;
+}
+
+.day-cell.saturday {
+  background: #fee2e2;
+}
+
+.day-cell.sunday {
+  background: #fecaca;
+}
+
+.day-cell.wednesday {
+  background: #e5e7eb;
 }
 
 .occurrence-pill {

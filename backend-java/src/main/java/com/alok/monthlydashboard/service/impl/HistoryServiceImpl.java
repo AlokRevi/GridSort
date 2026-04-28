@@ -121,6 +121,7 @@ public class HistoryServiceImpl implements HistoryService {
             results.add(new DashboardCategoryResponse(
                     category.getId(),
                     category.getName(),
+                    category.getColor(),
                     taskResponses
             ));
         }

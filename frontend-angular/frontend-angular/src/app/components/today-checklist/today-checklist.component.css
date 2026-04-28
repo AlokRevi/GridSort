@@ -85,19 +85,23 @@
   color: #c2410c;
 }
 
-.complete-button,
 .expand-button,
-.mini-complete-button {
-  border: 1px solid #bbf7d0;
+.date-action-button,
+.completed-indicator {
   border-radius: 10px;
-  background: #dcfce7;
-  color: #166534;
   font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+.date-action-button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid;
   cursor: pointer;
   padding: 0;
 }
 
-.complete-button,
 .expand-button {
   width: 34px;
   height: 34px;
@@ -109,9 +113,51 @@
   color: #c2410c;
 }
 
-.mini-complete-button {
-  width: 28px;
-  height: 28px;
+.due-date-button {
+  background: #dbeafe;
+  border-color: #60a5fa;
+  color: #1e3a8a;
+}
+
+.overdue-date-button {
+  background: #fdba74;
+  border-color: #fb923c;
+  color: #7c2d12;
+}
+
+.date-action-button:hover {
+  transform: scale(1.04);
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.completed-today-section {
+  margin-top: 6px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 8px;
+}
+
+.completed-today-section h3 {
+  margin: 0 0 8px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.completed-row {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.completed-indicator {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #bbf7d0;
+  background: #dcfce7;
+  color: #166534;
 }
 
 /* Hidden overdue list */

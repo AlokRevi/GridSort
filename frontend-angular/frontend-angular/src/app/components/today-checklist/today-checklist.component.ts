@@ -36,8 +36,16 @@ export class TodayChecklistComponent {
     return this.checklist?.items.filter(item => item.status === 'OVERDUE') ?? [];
   }
 
+  get completedTodayItems(): ChecklistItem[] {
+    return this.checklist?.items.filter(item => item.status === 'COMPLETED') ?? [];
+  }
+
   get totalCount(): number {
     return this.checklist?.items.length ?? 0;
+  }
+
+  get activeCount(): number {
+    return this.dueTodayItems.length + this.overdueItems.length;
   }
 
   toggleOverdueList(): void {
