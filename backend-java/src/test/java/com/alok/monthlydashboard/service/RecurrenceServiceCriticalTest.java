@@ -55,6 +55,48 @@ class RecurrenceServiceCriticalTest {
     }
 
     @Test
+    void februaryTwentyNinthOnlyOccursInLeapYearsWithoutFallback() {
+        Task task = fixedDateTask(103L, LocalDate.of(2023, 1, 1), false, 29);
+        when(taskRepository.findById(103L)).thenReturn(Optional.of(task));
+
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(103L, 2024, 2))
+                .containsExactly(LocalDate.of(2024, 2, 29));
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(103L, 2025, 2))
+                .isEmpty();
+    }
+
+    @Test
+    void februaryTwentyNinthFallsBackToLastDayInNonLeapYearsWhenEnabled() {
+        Task task = fixedDateTask(104L, LocalDate.of(2023, 1, 1), true, 29);
+        when(taskRepository.findById(104L)).thenReturn(Optional.of(task));
+
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(104L, 2025, 2))
+                .containsExactly(LocalDate.of(2025, 2, 28));
+    }
+
+    @Test
+    void fixedDatesOnThirtiethAndThirtyFirstFallbackToOneLastDayInShorterMonth() {
+        Task task = fixedDateTask(105L, LocalDate.of(2026, 1, 1), true, 30, 31);
+        when(taskRepository.findById(105L)).thenReturn(Optional.of(task));
+
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(105L, 2026, 2))
+                .containsExactly(LocalDate.of(2026, 2, 28));
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(105L, 2026, 4))
+                .containsExactly(LocalDate.of(2026, 4, 30));
+    }
+
+    @Test
+    void fixedDateDoesNotFallbackWhenFallbackIsDisabled() {
+        Task task = fixedDateTask(106L, LocalDate.of(2026, 1, 1), false, 31);
+        when(taskRepository.findById(106L)).thenReturn(Optional.of(task));
+
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(106L, 2026, 2))
+                .isEmpty();
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(106L, 2026, 4))
+                .isEmpty();
+    }
+
+    @Test
     void intervalTaskContinuesCadenceAcrossMonthBoundary() {
         Task task = intervalTask(101L, LocalDate.of(2026, 3, 30), 7);
         when(taskRepository.findById(101L)).thenReturn(Optional.of(task));
@@ -67,6 +109,90 @@ class RecurrenceServiceCriticalTest {
                 LocalDate.of(2026, 4, 20),
                 LocalDate.of(2026, 4, 27)
         );
+    }
+
+    @Test
+    void intervalTaskContinuesCadenceAcrossYearBoundary() {
+        Task task = intervalTask(107L, LocalDate.of(2025, 12, 29), 3);
+        when(taskRepository.findById(107L)).thenReturn(Optional.of(task));
+
+        List<LocalDate> dates = recurrenceService.generateOccurrenceDatesForMonth(107L, 2026, 1);
+
+        assertThat(dates).containsExactly(
+                LocalDate.of(2026, 1, 1),
+                LocalDate.of(2026, 1, 4),
+                LocalDate.of(2026, 1, 7),
+                LocalDate.of(2026, 1, 10),
+                LocalDate.of(2026, 1, 13),
+                LocalDate.of(2026, 1, 16),
+                LocalDate.of(2026, 1, 19),
+                LocalDate.of(2026, 1, 22),
+                LocalDate.of(2026, 1, 25),
+                LocalDate.of(2026, 1, 28),
+                LocalDate.of(2026, 1, 31)
+        );
+    }
+
+    @Test
+    void weekdayRulesSelectRequestedOrdinalWeekday() {
+        Task firstMonday = weekdayTask(
+                108L,
+                LocalDate.of(2026, 1, 1),
+                com.alok.monthlydashboard.entity.enums.Weekday.MONDAY,
+                com.alok.monthlydashboard.entity.enums.WeekOfMonth.FIRST
+        );
+        Task secondMonday = weekdayTask(
+                109L,
+                LocalDate.of(2026, 1, 1),
+                com.alok.monthlydashboard.entity.enums.Weekday.MONDAY,
+                com.alok.monthlydashboard.entity.enums.WeekOfMonth.SECOND
+        );
+        Task fourthMonday = weekdayTask(
+                110L,
+                LocalDate.of(2026, 1, 1),
+                com.alok.monthlydashboard.entity.enums.Weekday.MONDAY,
+                com.alok.monthlydashboard.entity.enums.WeekOfMonth.FOURTH
+        );
+        when(taskRepository.findById(108L)).thenReturn(Optional.of(firstMonday));
+        when(taskRepository.findById(109L)).thenReturn(Optional.of(secondMonday));
+        when(taskRepository.findById(110L)).thenReturn(Optional.of(fourthMonday));
+
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(108L, 2026, 3))
+                .containsExactly(LocalDate.of(2026, 3, 2));
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(109L, 2026, 3))
+                .containsExactly(LocalDate.of(2026, 3, 9));
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(110L, 2026, 3))
+                .containsExactly(LocalDate.of(2026, 3, 23));
+    }
+
+    @Test
+    void lastWeekdayUsesFinalMatchingDayWhenFifthExists() {
+        Task task = weekdayTask(
+                111L,
+                LocalDate.of(2026, 1, 1),
+                com.alok.monthlydashboard.entity.enums.Weekday.MONDAY,
+                com.alok.monthlydashboard.entity.enums.WeekOfMonth.LAST
+        );
+        when(taskRepository.findById(111L)).thenReturn(Optional.of(task));
+
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(111L, 2026, 3))
+                .containsExactly(LocalDate.of(2026, 3, 30));
+    }
+
+    @Test
+    void recurrenceDoesNotGenerateBeforeStartDateOrAfterEndDate() {
+        Task task = fixedDateTask(112L, LocalDate.of(2026, 4, 15), true, 10, 20);
+        task.setEndDate(LocalDate.of(2026, 5, 15));
+        when(taskRepository.findById(112L)).thenReturn(Optional.of(task));
+
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(112L, 2026, 3))
+                .isEmpty();
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(112L, 2026, 4))
+                .containsExactly(LocalDate.of(2026, 4, 20));
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(112L, 2026, 5))
+                .containsExactly(LocalDate.of(2026, 5, 10));
+        assertThat(recurrenceService.generateOccurrenceDatesForMonth(112L, 2026, 6))
+                .isEmpty();
     }
 
     @Test
@@ -89,16 +215,18 @@ class RecurrenceServiceCriticalTest {
                 .isEqualTo(OccurrenceStatus.OVERDUE);
     }
 
-    private Task fixedDateTask(Long id, LocalDate startDate, boolean fallbackToLastDay, int dayOfMonth) {
+    private Task fixedDateTask(Long id, LocalDate startDate, boolean fallbackToLastDay, int... daysOfMonth) {
         Task task = baseTask(id, RecurrenceType.FIXED_DATE, startDate);
 
         TaskRecurrenceRule rule = new TaskRecurrenceRule();
         rule.setFallbackToLastDay(fallbackToLastDay);
         task.setRecurrenceRule(rule);
 
-        TaskFixedDate fixedDate = new TaskFixedDate();
-        fixedDate.setDayOfMonth(dayOfMonth);
-        task.addFixedDate(fixedDate);
+        for (int dayOfMonth : daysOfMonth) {
+            TaskFixedDate fixedDate = new TaskFixedDate();
+            fixedDate.setDayOfMonth(dayOfMonth);
+            task.addFixedDate(fixedDate);
+        }
 
         return task;
     }
@@ -109,6 +237,22 @@ class RecurrenceServiceCriticalTest {
         TaskRecurrenceRule rule = new TaskRecurrenceRule();
         rule.setIntervalValue(intervalDays);
         rule.setIntervalUnit(com.alok.monthlydashboard.entity.enums.IntervalUnit.DAYS);
+        task.setRecurrenceRule(rule);
+
+        return task;
+    }
+
+    private Task weekdayTask(
+            Long id,
+            LocalDate startDate,
+            com.alok.monthlydashboard.entity.enums.Weekday weekday,
+            com.alok.monthlydashboard.entity.enums.WeekOfMonth weekOfMonth
+    ) {
+        Task task = baseTask(id, RecurrenceType.WEEKDAY, startDate);
+
+        TaskRecurrenceRule rule = new TaskRecurrenceRule();
+        rule.setWeekday(weekday);
+        rule.setWeekOfMonth(weekOfMonth);
         task.setRecurrenceRule(rule);
 
         return task;

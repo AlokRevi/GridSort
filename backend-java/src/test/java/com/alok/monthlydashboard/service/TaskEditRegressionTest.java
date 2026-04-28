@@ -10,6 +10,7 @@ import com.alok.monthlydashboard.dto.task.TaskRuleRequest;
 import com.alok.monthlydashboard.dto.task.UpdateTaskRequest;
 import com.alok.monthlydashboard.entity.Category;
 import com.alok.monthlydashboard.entity.Task;
+import com.alok.monthlydashboard.entity.TaskCompletion;
 import com.alok.monthlydashboard.entity.TaskFixedDate;
 import com.alok.monthlydashboard.entity.TaskRecurrenceRule;
 import com.alok.monthlydashboard.repository.CategoryRepository;
@@ -101,6 +102,25 @@ class TaskEditRegressionTest {
                 new TaskRuleRequest(null, null, null, Weekday.MONDAY, WeekOfMonth.FIRST, null)));
 
         assertThat(daysInApril()).containsExactly(6);
+    }
+
+    @Test
+    void editingRecurrencePreservesPastCompletions() {
+        TaskCompletion completion = new TaskCompletion();
+        completion.setTask(task);
+        completion.setOccurrenceDate(LocalDate.of(2026, 4, 15));
+        completion.setCompletionDate(LocalDate.of(2026, 4, 16));
+        task.addCompletion(completion);
+
+        taskService.updateTask(100L, updateRequest(1L, RecurrenceType.FIXED_DATE,
+                new TaskRuleRequest(List.of(20), null, null, null, null, true)));
+
+        assertThat(task.getCompletions())
+                .singleElement()
+                .satisfies(savedCompletion -> {
+                    assertThat(savedCompletion.getOccurrenceDate()).isEqualTo(LocalDate.of(2026, 4, 15));
+                    assertThat(savedCompletion.getCompletionDate()).isEqualTo(LocalDate.of(2026, 4, 16));
+                });
     }
 
     @Test
