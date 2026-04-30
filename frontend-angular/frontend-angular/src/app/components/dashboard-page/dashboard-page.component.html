@@ -1,7 +1,4 @@
 <div class="dashboard-page">
-  <!-- =========================================
-       HEADER
-  ========================================== -->
   <header class="top-header">
     <div>
       <div class="eyebrow">Monthly Critical Tasks</div>
@@ -9,16 +6,12 @@
       <div class="title-row">
         <h1>Monthly Dashboard</h1>
 
-        @if (overdueCount > 0) {
-        <span class="overdue-badge">
-          {{ overdueCount }} overdue
-        </span>
+        @if (state.overdueCount() > 0) {
+        <span class="overdue-badge">{{ state.overdueCount() }} overdue</span>
         }
 
-        @if (dueTodayCount > 0) {
-        <span class="today-badge">
-          {{ dueTodayCount }} due today
-        </span>
+        @if (state.dueTodayCount() > 0) {
+        <span class="today-badge">{{ state.dueTodayCount() }} due today</span>
         }
       </div>
 
@@ -28,240 +21,48 @@
       </p>
     </div>
 
-    <div class="controls">
-      <label>
-        Year
-        <input type="number" [(ngModel)]="selectedYear" />
-      </label>
-
-      <label>
-        Month
-        <select [(ngModel)]="selectedMonth">
-          @for (month of monthOptions; track month.value) {
-          <option [value]="month.value">{{ month.label }}</option>
-          }
-        </select>
-      </label>
-
-      <button type="button" [disabled]="loading" (click)="onMonthChanged()">
-        {{ loading ? 'Loading...' : 'Load' }}
-      </button>
-    </div>
+    <app-month-navigation
+      [selectedYear]="state.selectedYear()"
+      [selectedMonth]="state.selectedMonth()"
+      [loading]="state.loading()"
+      [monthOptions]="monthOptions"
+      (selectedYearChange)="state.setSelectedYear($event)"
+      (selectedMonthChange)="state.setSelectedMonth($event)"
+      (loadMonth)="state.loadDashboard()"
+      (previousMonth)="state.goToPreviousMonth()"
+      (currentMonth)="state.goToCurrentMonth()"
+      (nextMonth)="state.goToNextMonth()">
+    </app-month-navigation>
   </header>
 
-  <!-- =========================================
-       QUICK ADD
-  ========================================== -->
-  <section class="quick-form">
-    <h2>Quick Add</h2>
+  <app-task-create-form
+    [availableCategories]="state.availableCategories()"
+    [taskSaving]="state.taskSaving()"
+    [categorySaving]="state.categorySaving()"
+    [recurrenceOptions]="recurrenceOptions"
+    [intervalUnitOptions]="intervalUnitOptions"
+    [weekdayOptions]="weekdayOptions"
+    [weekOfMonthOptions]="weekOfMonthOptions"
+    (createTask)="state.createTask($event)"
+    (createCategory)="state.createCategory($event)"
+    (validationError)="state.showError($event)">
+  </app-task-create-form>
 
-    <div class="form-box">
-      <h3>Add Task</h3>
-
-      <div class="form-row">
-        <label>
-          Category
-          <select [(ngModel)]="newTaskCategoryId">
-            @for (category of availableCategories; track category.id) {
-            <option [value]="category.id">{{ category.name }}</option>
-            }
-          </select>
-          @if (fieldErrors['taskCategory']) {
-          <span class="field-error">{{ fieldErrors['taskCategory'] }}</span>
-          }
-        </label>
-
-        <label>
-          Task Name
-          <input type="text" [(ngModel)]="newTaskName" placeholder="Credit Card Bill" />
-          @if (fieldErrors['taskName']) {
-          <span class="field-error">{{ fieldErrors['taskName'] }}</span>
-          }
-        </label>
-
-        <label>
-          Description
-          <input type="text" [(ngModel)]="newTaskDescription" placeholder="Pay monthly bill" />
-        </label>
-
-        <label>
-          Recurrence
-          <select [(ngModel)]="newTaskRecurrenceType">
-            @for (option of recurrenceOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-
-        <label>
-          Start Date
-          <input type="date" [(ngModel)]="newTaskStartDate" />
-          @if (fieldErrors['taskStartDate']) {
-          <span class="field-error">{{ fieldErrors['taskStartDate'] }}</span>
-          }
-        </label>
-
-        <label>
-          End Date
-          <input type="date" [(ngModel)]="newTaskEndDate" />
-          @if (fieldErrors['taskEndDate']) {
-          <span class="field-error">{{ fieldErrors['taskEndDate'] }}</span>
-          }
-        </label>
-      </div>
-
-      @if (newTaskRecurrenceType === 'FIXED_DATE') {
-      <div class="form-row recurrence-row">
-        <label>
-          Dates of Task/Event (1–31, comma-separated)
-          <input
-            type="text"
-            [(ngModel)]="newTaskFixedDatesText"
-            placeholder="Example: 8, 21" />
-          @if (fieldErrors['fixedDates']) {
-          <span class="field-error">{{ fieldErrors['fixedDates'] }}</span>
-          }
-        </label>
-
-        <label class="checkbox-label">
-          <input type="checkbox" [(ngModel)]="fallbackToLastDay" />
-          If this date doesn’t exist, move it to the last day
-        </label>
-      </div>
-
-      <p class="form-helper">
-        Example: 31st → becomes 30th in April, 28th in February.
-      </p>
-      }
-
-      @if (newTaskRecurrenceType === 'INTERVAL') {
-      <div class="form-row recurrence-row">
-        <label>
-          Every
-          <input type="number" min="1" [(ngModel)]="intervalValue" />
-          @if (fieldErrors['intervalValue']) {
-          <span class="field-error">{{ fieldErrors['intervalValue'] }}</span>
-          }
-        </label>
-
-        <label>
-          Unit
-          <select [(ngModel)]="intervalUnit">
-            @for (option of intervalUnitOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      }
-
-      @if (newTaskRecurrenceType === 'WEEKDAY') {
-      <div class="form-row recurrence-row">
-        <label>
-          Week
-          <select [(ngModel)]="weekOfMonth">
-            @for (option of weekOfMonthOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-          @if (fieldErrors['weekOfMonth']) {
-          <span class="field-error">{{ fieldErrors['weekOfMonth'] }}</span>
-          }
-        </label>
-
-        <label>
-          Weekday
-          <select [(ngModel)]="weekday">
-            @for (day of weekdayOptions; track day) {
-            <option [value]="day">{{ day }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      }
-
-      <button
-        class="add-task-button"
-        type="button"
-        [disabled]="taskSaving || availableCategories.length === 0"
-        (click)="onCreateTask()">
-        {{ taskSaving ? 'Saving...' : 'Add Task' }}
-      </button>
-
-      @if (availableCategories.length === 0) {
-      <p class="form-helper">Create a category first before adding tasks.</p>
-      }
-    </div>
-
-    <div class="form-box">
-      <h3>Add Category</h3>
-
-      <div class="form-row">
-        <label>
-          Category Name
-          <input type="text" [(ngModel)]="newCategoryName" placeholder="Bills" />
-          @if (fieldErrors['categoryName']) {
-          <span class="field-error">{{ fieldErrors['categoryName'] }}</span>
-          }
-        </label>
-
-        <label>
-          Category Colour
-          <div class="color-picker-row">
-            <input
-              class="color-picker"
-              type="color"
-              [(ngModel)]="newCategoryColor" />
-
-            <span
-              class="color-preview"
-              [style.background]="newCategoryColor">
-            </span>
-
-            <span class="color-code">{{ newCategoryColor }}</span>
-          </div>
-        </label>
-
-        <button
-          type="button"
-          [disabled]="categorySaving"
-          (click)="onCreateCategory()">
-          {{ categorySaving ? 'Saving...' : 'Add Category' }}
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================
-       STATUS MESSAGES
-  ========================================== -->
-  @if (loading) {
+  @if (state.loading()) {
   <p class="loading">Loading dashboard...</p>
   }
 
-  @if (errorMessage) {
-  <p class="error">{{ errorMessage }}</p>
+  @if (state.errorMessage()) {
+  <p class="error">{{ state.errorMessage() }}</p>
   }
 
-  @if (successMessage) {
-  <p class="success">{{ successMessage }}</p>
+  @if (state.successMessage()) {
+  <p class="success">{{ state.successMessage() }}</p>
   }
 
-  <!-- =========================================
-       MONTH NAVIGATION
-  ========================================== -->
-  <div class="month-actions">
-    <button type="button" [disabled]="loading" (click)="goToPreviousMonth()">← Previous</button>
-    <button type="button" [disabled]="loading" (click)="goToCurrentMonth()">Current Month</button>
-    <button type="button" [disabled]="loading" (click)="goToNextMonth()">Next →</button>
-  </div>
-
-  <!-- =========================================
-       MAIN DASHBOARD
-  ========================================== -->
   <main class="dashboard-layout">
     <section class="main-panel">
-      @if (dashboard) {
+      @if (state.dashboard(); as dashboard) {
       <div class="card">
         <div class="section-header">
           <h2>{{ dashboard.monthLabel }}</h2>
@@ -280,23 +81,21 @@
           <span><i class="dot due-today"></i> Due today</span>
         </div>
 
-        @if (visibleDashboardCategories.length === 0) {
+        @if (state.visibleDashboardCategories().length === 0) {
         <div class="empty-dashboard-state">
           <strong>No active task occurrences yet.</strong>
           <p>Add a task above to start building your monthly view.</p>
         </div>
         } @else {
-        <p class="helper-note">
-          Showing only categories that currently have tasks.
-        </p>
+        <p class="helper-note">Showing only categories that currently have tasks.</p>
 
         <app-category-section
-          [categories]="visibleDashboardCategories"
+          [categories]="state.visibleDashboardCategories()"
           [dayStrip]="dashboard.dayStrip"
-          (markComplete)="onMarkComplete($event)"
-          (undoComplete)="onUndoComplete($event)"
-          (deleteTask)="onDeleteTask($event)"
-          (editTask)="openEditTaskModal($event)">
+          (markComplete)="state.markComplete($event)"
+          (undoComplete)="state.undoComplete($event)"
+          (deleteTask)="state.deleteTask($event)"
+          (editTask)="state.openEditTaskModal($event)">
         </app-category-section>
         }
       </div>
@@ -304,349 +103,32 @@
     </section>
 
     <aside class="side-panel">
-      @if (checklist) {
+      @if (state.checklist(); as checklist) {
       <app-today-checklist
         [checklist]="checklist"
-        (markComplete)="onMarkComplete($event)">
+        (markComplete)="state.markComplete($event)">
       </app-today-checklist>
       }
 
-
-      <section class="category-cleanup">
-        <h2>Categories</h2>
-
-        @if (availableCategories.length === 0) {
-        <p class="empty-small">No categories yet.</p>
-        }
-
-        @for (category of availableCategories; track category.id) {
-        <div
-          class="cleanup-row category-hover-row"
-          [class.category-expanded]="isCategoryExpanded(category.id)">
-
-          <button
-            type="button"
-            class="category-summary-button"
-            (click)="toggleCategoryCompleted(category.id)">
-      <span class="category-name-with-color">
-        <i
-          class="category-color-dot"
-          [style.background]="category.color">
-        </i>
-
-        <span>
-          {{ category.name }}
-          <small>({{ category.taskCount }} tasks)</small>
-        </span>
-      </span>
-
-            <span class="category-arrow">
-        {{ isCategoryExpanded(category.id) ? '▴' : '▾' }}
-      </span>
-          </button>
-
-          @if (category.taskCount === 0) {
-          <button
-            type="button"
-            class="category-delete-button"
-            (click)="onDeleteCategory(category.id)">
-            Delete
-          </button>
-          }
-
-          <div class="completed-category-popover">
-            @if (getCompletedTasksForCategory(category.id).length === 0) {
-            <p class="completed-empty">No completed tasks this month.</p>
-            }
-
-            @for (item of getCompletedTasksForCategory(category.id); track item.taskName + item.occurrenceDate) {
-            <div class="completed-task-item">
-              <strong>{{ item.taskName }}</strong>
-              <span>{{ item.occurrenceDate }}</span>
-            </div>
-            }
-          </div>
-        </div>
-        }
-      </section>
-
-
+      <app-category-manager
+        [categories]="state.availableCategories()"
+        [dashboard]="state.dashboard()"
+        (deleteCategory)="state.deleteCategory($event)">
+      </app-category-manager>
     </aside>
   </main>
-  @if (editModalOpen) {
-  <div class="modal-backdrop">
-    <section class="edit-modal">
-      <header class="modal-header">
-        <h2>Edit Task</h2>
-        <button type="button" class="modal-close" (click)="closeEditTaskModal()">×</button>
-      </header>
 
-      @if (editLoading) {
-      <p class="loading">Loading task...</p>
-      } @else {
-      <div class="form-row">
-        <label>
-          Category
-          <select [(ngModel)]="editTaskCategoryId">
-            @for (category of availableCategories; track category.id) {
-            <option [value]="category.id">{{ category.name }}</option>
-            }
-          </select>
-        </label>
-
-        <label>
-          Task Name
-          <input type="text" [(ngModel)]="editTaskName" />
-        </label>
-
-        <label>
-          Description
-          <input type="text" [(ngModel)]="editTaskDescription" />
-        </label>
-      </div>
-
-      <div class="form-row">
-        <label>
-          Recurrence
-          <select [(ngModel)]="editTaskRecurrenceType">
-            @for (option of recurrenceOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-
-        <label>
-          Start Date
-          <input type="date" [(ngModel)]="editTaskStartDate" />
-        </label>
-
-        <label>
-          End Date
-          <input type="date" [(ngModel)]="editTaskEndDate" />
-        </label>
-      </div>
-
-      @if (editTaskRecurrenceType === 'FIXED_DATE') {
-      <div class="form-row recurrence-row">
-        <label>
-          Dates of Task/Event
-          <input type="text" [(ngModel)]="editTaskFixedDatesText" placeholder="Example: 8, 21" />
-        </label>
-
-        <label class="checkbox-label">
-          <input type="checkbox" [(ngModel)]="editFallbackToLastDay" />
-          If this date doesn’t exist, move it to the last day
-        </label>
-      </div>
-      }
-
-      @if (editTaskRecurrenceType === 'INTERVAL') {
-      <div class="form-row recurrence-row">
-        <label>
-          Every
-          <input type="number" min="1" [(ngModel)]="editIntervalValue" />
-        </label>
-
-        <label>
-          Unit
-          <select [(ngModel)]="editIntervalUnit">
-            @for (option of intervalUnitOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      }
-
-      @if (editTaskRecurrenceType === 'WEEKDAY') {
-      <div class="form-row recurrence-row">
-        <label>
-          Week
-          <select [(ngModel)]="editWeekOfMonth">
-            @for (option of weekOfMonthOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-
-        <label>
-          Weekday
-          <select [(ngModel)]="editWeekday">
-            @for (day of weekdayOptions; track day) {
-            <option [value]="day">{{ day }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      }
-
-      <div class="modal-actions">
-        <button type="button" class="secondary-button" (click)="closeEditTaskModal()">Cancel</button>
-        <button type="button" [disabled]="editSaving" (click)="onUpdateTask()">
-          {{ editSaving ? 'Saving...' : 'Save Changes' }}
-        </button>
-      </div>
-      }
-    </section>
-  </div>
-  }
-  @if (editModalOpen) {
-  <div class="modal-backdrop">
-    <section class="edit-modal">
-      <header class="modal-header">
-        <h2>Edit Task</h2>
-
-        <button
-          type="button"
-          class="modal-close"
-          (click)="closeEditTaskModal()">
-          ×
-        </button>
-      </header>
-
-      @if (editLoading) {
-      <p class="loading">Loading task...</p>
-      } @else {
-      <div class="form-row">
-        <label>
-          Category
-          <select [(ngModel)]="editTaskCategoryId">
-            @for (category of availableCategories; track category.id) {
-            <option [value]="category.id">{{ category.name }}</option>
-            }
-          </select>
-
-          @if (fieldErrors['editTaskCategory']) {
-          <span class="field-error">{{ fieldErrors['editTaskCategory'] }}</span>
-          }
-        </label>
-
-        <label>
-          Task Name
-          <input type="text" [(ngModel)]="editTaskName" />
-
-          @if (fieldErrors['editTaskName']) {
-          <span class="field-error">{{ fieldErrors['editTaskName'] }}</span>
-          }
-        </label>
-
-        <label>
-          Description
-          <input type="text" [(ngModel)]="editTaskDescription" />
-        </label>
-      </div>
-
-      <div class="form-row">
-        <label>
-          Recurrence
-          <select [(ngModel)]="editTaskRecurrenceType">
-            @for (option of recurrenceOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-
-        <label>
-          Start Date
-          <input type="date" [(ngModel)]="editTaskStartDate" />
-
-          @if (fieldErrors['editTaskStartDate']) {
-          <span class="field-error">{{ fieldErrors['editTaskStartDate'] }}</span>
-          }
-        </label>
-
-        <label>
-          End Date
-          <input type="date" [(ngModel)]="editTaskEndDate" />
-
-          @if (fieldErrors['editTaskEndDate']) {
-          <span class="field-error">{{ fieldErrors['editTaskEndDate'] }}</span>
-          }
-        </label>
-      </div>
-
-      @if (editTaskRecurrenceType === 'FIXED_DATE') {
-      <div class="form-row recurrence-row">
-        <label>
-          Dates of Task/Event
-          <input
-            type="text"
-            [(ngModel)]="editTaskFixedDatesText"
-            placeholder="Example: 8, 21" />
-
-          @if (fieldErrors['editFixedDates']) {
-          <span class="field-error">{{ fieldErrors['editFixedDates'] }}</span>
-          }
-        </label>
-
-        <label class="checkbox-label">
-          <input type="checkbox" [(ngModel)]="editFallbackToLastDay" />
-          If this date doesn’t exist, move it to the last day
-        </label>
-      </div>
-      }
-
-      @if (editTaskRecurrenceType === 'INTERVAL') {
-      <div class="form-row recurrence-row">
-        <label>
-          Every
-          <input type="number" min="1" [(ngModel)]="editIntervalValue" />
-
-          @if (fieldErrors['editIntervalValue']) {
-          <span class="field-error">{{ fieldErrors['editIntervalValue'] }}</span>
-          }
-        </label>
-
-        <label>
-          Unit
-          <select [(ngModel)]="editIntervalUnit">
-            @for (option of intervalUnitOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      }
-
-      @if (editTaskRecurrenceType === 'WEEKDAY') {
-      <div class="form-row recurrence-row">
-        <label>
-          Week
-          <select [(ngModel)]="editWeekOfMonth">
-            @for (option of weekOfMonthOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-        </label>
-
-        <label>
-          Weekday
-          <select [(ngModel)]="editWeekday">
-            @for (day of weekdayOptions; track day) {
-            <option [value]="day">{{ day }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      }
-
-      <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          (click)="closeEditTaskModal()">
-          Cancel
-        </button>
-
-        <button
-          type="button"
-          [disabled]="editSaving"
-          (click)="onUpdateTask()">
-          {{ editSaving ? 'Saving...' : 'Save Changes' }}
-        </button>
-      </div>
-      }
-    </section>
-  </div>
-  }
+  <app-task-edit-modal
+    [open]="state.editModalOpen()"
+    [loading]="state.editLoading()"
+    [saving]="state.editSaving()"
+    [task]="state.editTask()"
+    [availableCategories]="state.availableCategories()"
+    [recurrenceOptions]="recurrenceOptions"
+    [intervalUnitOptions]="intervalUnitOptions"
+    [weekdayOptions]="weekdayOptions"
+    [weekOfMonthOptions]="weekOfMonthOptions"
+    (close)="state.closeEditTaskModal()"
+    (save)="state.updateTask($event)">
+  </app-task-edit-modal>
 </div>
