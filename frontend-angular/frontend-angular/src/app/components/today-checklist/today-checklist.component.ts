@@ -2,10 +2,17 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { CommonModule } from '@angular/common';
 
 import {
+  CategoryRequires,
   ChecklistItem,
   TodayChecklistResponse
 } from '../../models/dashboard.models';
 import { DateFormatService } from '../../services/date-format.service';
+
+interface ChecklistGroup {
+  requires: CategoryRequires;
+  label: string;
+  items: ChecklistItem[];
+}
 
 @Component({
   selector: 'app-today-checklist',
@@ -23,14 +30,14 @@ export class TodayChecklistComponent {
     occurrenceDate: string;
   }>();
 
-  // Mobile/touch state for showing overdue list.
-  overdueExpanded = false;
+  private readonly groupOrder: CategoryRequires[] = ['FOCUS', 'MOVEMENT', 'OUTDOOR'];
+  private readonly groupLabels: Record<CategoryRequires, string> = {
+    FOCUS: 'Focus',
+    MOVEMENT: 'Movement',
+    OUTDOOR: 'Outdoor'
+  };
 
   constructor(public dateFormat: DateFormatService) {}
-
-  get dueTodayItems(): ChecklistItem[] {
-    return this.checklist?.items.filter(item => item.status === 'DUE_TODAY') ?? [];
-  }
 
   get overdueItems(): ChecklistItem[] {
     return this.checklist?.items.filter(item => item.status === 'OVERDUE') ?? [];
@@ -45,14 +52,26 @@ export class TodayChecklistComponent {
   }
 
   get activeCount(): number {
-    return this.dueTodayItems.length + this.overdueItems.length;
+    return this.checklist?.items.filter(item => item.status !== 'COMPLETED').length ?? 0;
   }
 
-  toggleOverdueList(): void {
-    this.overdueExpanded = !this.overdueExpanded;
+  get groupedChecklistItems(): ChecklistGroup[] {
+    const items = this.checklist?.items ?? [];
+
+    return this.groupOrder
+      .map(requires => ({
+        requires,
+        label: this.groupLabels[requires],
+        items: this.sortItems(items.filter(item => item.categoryRequires === requires))
+      }))
+      .filter(group => group.items.length > 0);
   }
 
   onMarkComplete(item: ChecklistItem): void {
+    if (item.status === 'COMPLETED') {
+      return;
+    }
+
     this.markComplete.emit({
       taskId: item.taskId,
       occurrenceDate: item.occurrenceDate
@@ -65,5 +84,39 @@ export class TodayChecklistComponent {
 
   trackByChecklistItem(index: number, item: ChecklistItem): string {
     return `${item.taskId}-${item.occurrenceDate}`;
+  }
+
+  trackByGroup(index: number, group: ChecklistGroup): CategoryRequires {
+    return group.requires;
+  }
+
+  private sortItems(items: ChecklistItem[]): ChecklistItem[] {
+    return [...items].sort((a, b) => {
+      const statusDifference = this.getStatusRank(a) - this.getStatusRank(b);
+
+      if (statusDifference !== 0) {
+        return statusDifference;
+      }
+
+      const dateDifference = a.occurrenceDate.localeCompare(b.occurrenceDate);
+
+      if (dateDifference !== 0) {
+        return dateDifference;
+      }
+
+      return a.taskName.localeCompare(b.taskName);
+    });
+  }
+
+  private getStatusRank(item: ChecklistItem): number {
+    if (item.status === 'OVERDUE') {
+      return 0;
+    }
+
+    if (item.status === 'DUE_TODAY') {
+      return 1;
+    }
+
+    return 2;
   }
 }

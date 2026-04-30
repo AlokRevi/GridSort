@@ -26,7 +26,22 @@
 .checklist-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+
+.checklist-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.checklist-group h3 {
+  margin: 2px 0 0;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .checklist-row {
@@ -58,14 +73,12 @@
   line-height: 1.2;
 }
 
-.item-meta {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 3px;
-  color: #64748b;
-  font-size: 11px;
-  font-weight: 700;
+.category-color-dot {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  flex: 0 0 auto;
 }
 
 .status-pill {
@@ -85,7 +98,6 @@
   color: #c2410c;
 }
 
-.expand-button,
 .date-action-button,
 .completed-indicator {
   border-radius: 10px;
@@ -100,17 +112,6 @@
   border: 1px solid;
   cursor: pointer;
   padding: 0;
-}
-
-.expand-button {
-  width: 34px;
-  height: 34px;
-}
-
-.expand-button {
-  background: #fff7ed;
-  border-color: #fed7aa;
-  color: #c2410c;
 }
 
 .due-date-button {
@@ -158,50 +159,6 @@
   border: 1px solid #bbf7d0;
   background: #dcfce7;
   color: #166534;
-}
-
-/* Hidden overdue list */
-.overdue-popover {
-  display: none;
-  grid-column: 1 / -1;
-  margin-top: 8px;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 8px;
-}
-
-/* Desktop hover opens list */
-@media (hover: hover) and (pointer: fine) {
-  .overdue-group:hover .overdue-popover {
-    display: block;
-  }
-}
-
-/* Mobile/touch opens list using arrow */
-.overdue-group.expanded .overdue-popover {
-  display: block;
-}
-
-.overdue-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  border-top: 1px solid #f1f5f9;
-}
-
-.overdue-item:first-child {
-  border-top: none;
-}
-
-.overdue-item strong {
-  font-size: 12px;
-}
-
-.overdue-item p {
-  margin: 2px 0 0;
-  color: #64748b;
-  font-size: 11px;
 }
 
 .empty-state {

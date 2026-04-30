@@ -9,102 +9,54 @@
 
   @if (checklist && totalCount > 0) {
   <div class="checklist-list">
+    @for (group of groupedChecklistItems; track trackByGroup($index, group)) {
+    <section class="checklist-group">
+      <h3>{{ group.label }}</h3>
 
-    <!-- Due today items stay visible individually -->
-    @for (item of dueTodayItems; track trackByChecklistItem($index, item)) {
-    <article class="checklist-row">
-      <div class="item-main">
-        <div class="item-title-line">
-          <strong>{{ item.taskName }}</strong>
-          <span class="status-pill status-due">Due today</span>
-        </div>
+      @for (item of group.items; track trackByChecklistItem($index, item)) {
+      <article
+        class="checklist-row"
+        [class.completed-row]="item.status === 'COMPLETED'">
+        <div class="item-main">
+          <div class="item-title-line">
+            <span
+              class="category-color-dot"
+              [style.background]="item.categoryColor"
+              [title]="item.categoryName">
+            </span>
 
-        <div class="item-meta">
-          <span>{{ item.categoryName }}</span>
-          <span>•</span>
-          <span>{{ dateFormat.toShortMonthDay(item.occurrenceDate) }}</span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        class="date-action-button due-date-button"
-        [title]="'Mark complete for ' + item.occurrenceDate"
-        (click)="onMarkComplete(item)">
-        {{ getDayNumber(item) }}
-      </button>
-    </article>
-    }
-
-    <!-- Overdue items collapsed into one row -->
-    @if (overdueItems.length > 0) {
-    <article
-      class="checklist-row overdue-group"
-      [class.expanded]="overdueExpanded">
-
-      <div class="item-main">
-        <div class="item-title-line">
-          <strong>{{ overdueItems.length }} overdue task(s)</strong>
-          <span class="status-pill status-overdue">Overdue</span>
-        </div>
-
-        <div class="item-meta">
-          <span>Hover or expand to review missed tasks</span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        class="expand-button"
-        (click)="toggleOverdueList()">
-        {{ overdueExpanded ? '▴' : '▾' }}
-      </button>
-
-      <!-- Desktop: shows on hover. Mobile: shows when expanded. -->
-      <div class="overdue-popover">
-        @for (item of overdueItems; track trackByChecklistItem($index, item)) {
-        <div class="overdue-item">
-          <div>
             <strong>{{ item.taskName }}</strong>
-            <p>{{ item.categoryName }} • {{ dateFormat.toWeekdayLongMonthOrdinal(item.occurrenceDate) }}</p>
-          </div>
 
+            @if (item.status === 'OVERDUE') {
+            <span class="status-pill status-overdue">Overdue</span>
+            }
+
+            @if (item.status === 'DUE_TODAY') {
+            <span class="status-pill status-due">Due today</span>
+            }
+
+            @if (item.status === 'COMPLETED') {
+            <span class="status-pill status-completed">Completed</span>
+            }
+          </div>
+        </div>
+
+        @if (item.status === 'COMPLETED') {
+        <div class="completed-indicator" title="Completed today">✓</div>
+        } @else {
           <button
             type="button"
-            class="date-action-button overdue-date-button"
+            class="date-action-button"
+            [class.overdue-date-button]="item.status === 'OVERDUE'"
+            [class.due-date-button]="item.status === 'DUE_TODAY'"
             [title]="'Mark complete for ' + item.occurrenceDate"
             (click)="onMarkComplete(item)">
             {{ getDayNumber(item) }}
           </button>
-        </div>
         }
-      </div>
-    </article>
-    }
-
-    @if (completedTodayItems.length > 0) {
-    <div class="completed-today-section">
-      <h3>Completed today</h3>
-
-      @for (item of completedTodayItems; track trackByChecklistItem($index, item)) {
-      <article class="checklist-row completed-row">
-        <div class="item-main">
-          <div class="item-title-line">
-            <strong>{{ item.taskName }}</strong>
-            <span class="status-pill status-completed">Completed</span>
-          </div>
-
-          <div class="item-meta">
-            <span>{{ item.categoryName }}</span>
-            <span>•</span>
-            <span>{{ dateFormat.toShortMonthDay(item.occurrenceDate) }}</span>
-          </div>
-        </div>
-
-        <div class="completed-indicator" title="Completed today">✓</div>
       </article>
       }
-    </div>
+    </section>
     }
   </div>
   }
