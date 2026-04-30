@@ -44,6 +44,7 @@
           @for (day of dayStrip; track trackByDay($index, day)) {
           <div
             class="day-cell"
+            [ngClass]="getPastCellClass(day)"
             [class.saturday]="day.weekday === 'SATURDAY'"
             [class.sunday]="day.weekday === 'SUNDAY'"
             [class.wednesday]="day.weekday === 'WEDNESDAY'">
@@ -57,6 +58,7 @@
               [class.overdue]="occurrence.status === 'OVERDUE'"
               [class.due-today]="occurrence.status === 'DUE_TODAY'"
               [class.upcoming]="occurrence.status === 'UPCOMING'"
+              [class.past-occurrence]="isPastDay(day)"
               (click)="onOccurrenceClicked(task, occurrence); $event.stopPropagation()"
               [title]="occurrence.status + ' - ' + occurrence.occurrenceDate">
               {{ occurrence.dayOfMonth }}

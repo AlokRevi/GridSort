@@ -23,6 +23,7 @@
       @for (day of dayStrip; track day.date) {
       <div
         class="day-cell"
+        [ngClass]="getPastCellClass(day)"
         [title]="day.date + ' · ' + day.weekday"
         [class.today]="day.isToday"
         [class.saturday]="day.weekday === 'SATURDAY'"

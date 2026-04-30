@@ -68,7 +68,7 @@
 .day-cell {
   position: relative;
   height: 30px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d5dee9;
   border-radius: 7px;
   background: white;
   text-align: center;
@@ -78,15 +78,45 @@
 }
 
 .day-cell.saturday {
-  background: #fee2e2;
+  background: #fff1f2;
 }
 
 .day-cell.sunday {
-  background: #fecaca;
+  background: #ffe4e6;
 }
 
 .day-cell.wednesday {
-  background: #e5e7eb;
+  background: #f1f5f9;
+}
+
+.day-cell.past-recent {
+  background: #f5f7fa;
+  color: #64748b;
+}
+
+.day-cell.past-mid {
+  background: #eef2f6;
+  color: #64748b;
+}
+
+.day-cell.past-old {
+  background: #e7ecf2;
+  color: #64748b;
+}
+
+.day-cell.saturday.past-recent,
+.day-cell.sunday.past-recent {
+  background: #fae8ea;
+}
+
+.day-cell.saturday.past-mid,
+.day-cell.sunday.past-mid {
+  background: #f3dde1;
+}
+
+.day-cell.saturday.past-old,
+.day-cell.sunday.past-old {
+  background: #ead2d8;
 }
 
 .day-cell.today {

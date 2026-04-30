@@ -154,24 +154,53 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
+  background: #ffffff;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
 }
 
 .day-cell.saturday {
-  background: #fee2e2;
+  background: #fff1f2;
 }
 
 .day-cell.sunday {
-  background: #fecaca;
+  background: #ffe4e6;
 }
 
 .day-cell.wednesday {
-  background: #e5e7eb;
+  background: #f1f5f9;
+}
+
+.day-cell.past-recent {
+  background: #f5f7fa;
+}
+
+.day-cell.past-mid {
+  background: #eef2f6;
+}
+
+.day-cell.past-old {
+  background: #e7ecf2;
+}
+
+.day-cell.saturday.past-recent,
+.day-cell.sunday.past-recent {
+  background: #fae8ea;
+}
+
+.day-cell.saturday.past-mid,
+.day-cell.sunday.past-mid {
+  background: #f3dde1;
+}
+
+.day-cell.saturday.past-old,
+.day-cell.sunday.past-old {
+  background: #ead2d8;
 }
 
 .occurrence-pill {
   width: 22px;
   height: 22px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d5dee9;
   border-radius: 7px;
   background: white;
   color: #1f2937;
@@ -182,27 +211,31 @@
 }
 
 .occurrence-pill.completed {
-  background: #86efac;
-  border-color: #4ade80;
-  color: #14532d;
+  background: #d8f7e2;
+  border-color: #9ee8b5;
+  color: #166534;
 }
 
 .occurrence-pill.overdue {
-  background: #fdba74;
-  border-color: #fb923c;
-  color: #7c2d12;
+  background: #fde7c7;
+  border-color: #f8c486;
+  color: #92400e;
 }
 
 .occurrence-pill.due-today {
-  background: #93c5fd;
-  border-color: #60a5fa;
+  background: #dbeafe;
+  border-color: #93c5fd;
   color: #1e3a8a;
 }
 
 .occurrence-pill.upcoming {
-  background: white;
-  border-color: #cbd5e1;
-  color: #1f2937;
+  background: #ffffff;
+  border-color: #d5dee9;
+  color: #334155;
+}
+
+.occurrence-pill.past-occurrence {
+  box-shadow: inset 0 0 0 999px rgb(148 163 184 / 0.08);
 }
 
 .occurrence-pill:hover {
