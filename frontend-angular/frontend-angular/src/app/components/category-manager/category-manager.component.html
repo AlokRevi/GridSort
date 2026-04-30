@@ -43,10 +43,10 @@
       <p class="completed-empty">No active tasks this month.</p>
       }
 
-      @for (item of categoryTaskItemsById[category.id]; track item.taskName + item.occurrenceDate) {
-      <div class="completed-task-item">
+      @for (item of categoryTaskItemsById[category.id]; track item.taskId) {
+      <div class="category-task-summary">
         <strong>{{ item.taskName }}</strong>
-        <span>{{ dateFormat.toWeekdayLongMonthOrdinal(item.occurrenceDate) }}</span>
+        <span>{{ item.recurrenceSummary }}</span>
       </div>
       }
     </div>

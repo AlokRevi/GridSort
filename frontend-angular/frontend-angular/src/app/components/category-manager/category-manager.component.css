@@ -121,23 +121,24 @@
   font-size: 12px;
 }
 
-.completed-task-item {
+.category-task-summary {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 0;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 0;
   border-top: 1px solid #f1f5f9;
   font-size: 12px;
 }
 
-.completed-task-item:first-of-type {
+.category-task-summary:first-of-type {
   border-top: none;
 }
 
-.completed-task-item strong {
+.category-task-summary strong {
   color: #1f2937;
 }
 
-.completed-task-item span {
+.category-task-summary span {
   color: #64748b;
+  line-height: 1.25;
 }

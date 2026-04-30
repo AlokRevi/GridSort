@@ -10,13 +10,14 @@ import { CommonModule } from '@angular/common';
 
 import {
   CategoryResponse,
+  DashboardTask,
   MonthlyDashboardResponse
 } from '../../models/dashboard.models';
-import { DateFormatService } from '../../services/date-format.service';
 
 interface CategoryTaskItem {
+  taskId: number;
   taskName: string;
-  occurrenceDate: string;
+  recurrenceSummary: string;
 }
 
 @Component({
@@ -35,8 +36,6 @@ export class CategoryManagerComponent implements OnChanges {
 
   expandedCategoryId: number | null = null;
   categoryTaskItemsById: Record<number, CategoryTaskItem[]> = {};
-
-  constructor(public dateFormat: DateFormatService) {}
 
   ngOnChanges(): void {
     this.categoryTaskItemsById = this.buildCategoryTaskItemsById();
@@ -59,15 +58,18 @@ export class CategoryManagerComponent implements OnChanges {
 
     for (const category of this.dashboard?.categories ?? []) {
       taskItemsById[category.categoryId] = category.tasks
-        .flatMap(task =>
-          task.occurrences.map(occurrence => ({
-            taskName: task.taskName,
-            occurrenceDate: occurrence.occurrenceDate
-          }))
-        )
-        .sort((a, b) => a.occurrenceDate.localeCompare(b.occurrenceDate));
+        .map(task => this.toCategoryTaskItem(task))
+        .sort((a, b) => a.taskName.localeCompare(b.taskName));
     }
 
     return taskItemsById;
+  }
+
+  private toCategoryTaskItem(task: DashboardTask): CategoryTaskItem {
+    return {
+      taskId: task.taskId,
+      taskName: task.taskName,
+      recurrenceSummary: task.recurrenceSummary
+    };
   }
 }
