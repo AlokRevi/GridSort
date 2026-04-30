@@ -38,6 +38,7 @@ export interface DashboardTask {
   taskId: number;
   taskName: string;
   recurrenceType: RecurrenceType;
+  recurrenceSummary: string;
   occurrences: DashboardOccurrence[];
 }
 

@@ -6,6 +6,7 @@ public record DashboardTaskResponse(
         Long taskId,
         String taskName,
         RecurrenceType recurrenceType,
+        String recurrenceSummary,
         List<OccurrenceResponse> occurrences
 ) {
 }

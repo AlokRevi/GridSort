@@ -19,6 +19,7 @@ import com.alok.monthlydashboard.repository.TaskRepository;
 import com.alok.monthlydashboard.service.AppDateProvider;
 import com.alok.monthlydashboard.service.HistoryService;
 import com.alok.monthlydashboard.service.RecurrenceService;
+import com.alok.monthlydashboard.util.RecurrenceSummaryHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,6 +119,7 @@ public class HistoryServiceImpl implements HistoryService {
                         task.getId(),
                         task.getName(),
                         task.getRecurrenceType(),
+                        RecurrenceSummaryHelper.summarize(task),
                         occurrences
                 ));
             }

@@ -13,6 +13,7 @@ import com.alok.monthlydashboard.repository.TaskRepository;
 import com.alok.monthlydashboard.service.AppDateProvider;
 import com.alok.monthlydashboard.service.DashboardService;
 import com.alok.monthlydashboard.service.RecurrenceService;
+import com.alok.monthlydashboard.util.RecurrenceSummaryHelper;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -87,6 +88,7 @@ public class DashboardServiceImpl implements DashboardService {
                         task.getId(),
                         task.getName(),
                         task.getRecurrenceType(),
+                        RecurrenceSummaryHelper.summarize(task),
                         occurrences
                 ));
             }
