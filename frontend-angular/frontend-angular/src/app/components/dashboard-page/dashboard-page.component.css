@@ -225,40 +225,35 @@ h1 {
 
 @media (max-width: 760px) {
   .dashboard-page {
+    display: flex;
+    flex-direction: column;
     padding: 12px;
   }
 
   .top-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    display: none;
   }
 
-  h1 {
-    font-size: 26px;
-  }
-
-  .dashboard-intro {
-    font-size: 12px;
-  }
-
-  .card {
-    border-radius: 14px;
-    padding: 12px;
+  app-task-create-form {
+    order: 2;
   }
 
   .dashboard-layout {
+    order: 1;
     display: grid;
     grid-template-columns: 1fr;
     gap: 14px;
   }
 
   .main-panel {
-    order: 1;
+    display: none;
   }
 
   .side-panel {
-    order: 2;
     position: static;
+  }
+
+  app-category-manager {
+    display: none;
   }
 }
