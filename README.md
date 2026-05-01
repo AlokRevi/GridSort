@@ -112,7 +112,7 @@ New frontend work should happen in `frontend-angular/frontend-angular`.
 
 ```bash
 cd backend-java
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 Backend URL:
@@ -154,6 +154,8 @@ Backend CORS configuration:
 
 ```text
 backend-java/src/main/resources/application.properties
+backend-java/src/main/resources/application-dev.properties
+backend-java/src/main/resources/application-prod.properties
 ```
 
 Deployment example:
@@ -161,6 +163,8 @@ Deployment example:
 ```powershell
 $env:APP_CORS_ALLOWED_ORIGINS="https://your-domain.com"
 ```
+
+See `DEPLOYMENT.md` for the private V2 deployment checklist.
 
 ## Verify
 
