@@ -26,6 +26,7 @@ export class DashboardPageStateService {
   errorMessage = signal('');
   successMessage = signal('');
   taskSaving = signal(false);
+  taskCreateSuccessCount = signal(0);
   categorySaving = signal(false);
   categoryCreateDialogOpen = signal(false);
 
@@ -123,13 +124,14 @@ export class DashboardPageStateService {
     this.dashboardApi.createTask(request).subscribe({
       next: () => {
         this.taskSaving.set(false);
+        this.taskCreateSuccessCount.update(count => count + 1);
         this.showSuccess('Task created.');
         this.loadDashboard();
       },
       error: (error) => {
         console.error('Create task failed:', error);
         this.taskSaving.set(false);
-        this.showError('Could not create task.');
+        this.showError(this.buildApiErrorMessage('Could not create task', error));
       }
     });
   }
@@ -307,5 +309,21 @@ export class DashboardPageStateService {
   private clearMessages(): void {
     this.errorMessage.set('');
     this.successMessage.set('');
+  }
+
+  private buildApiErrorMessage(prefix: string, error: unknown): string {
+    const apiError = error as { error?: { message?: string; details?: string[] } };
+    const message = apiError.error?.message;
+    const details = apiError.error?.details?.filter(Boolean).join(' ');
+
+    if (message && details) {
+      return `${prefix}: ${message} ${details}`;
+    }
+
+    if (message) {
+      return `${prefix}: ${message}`;
+    }
+
+    return `${prefix}.`;
   }
 }

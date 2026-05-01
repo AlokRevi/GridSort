@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,10 +19,11 @@ import { DateFormatService } from '../../services/date-format.service';
   styleUrl: './task-create-form.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TaskCreateFormComponent {
+export class TaskCreateFormComponent implements OnChanges {
   @Input() availableCategories: CategoryResponse[] = [];
   @Input() taskSaving = false;
   @Input() categorySaving = false;
+  @Input() taskCreateSuccessCount = 0;
   @Input() recurrenceOptions: { value: RecurrenceType; label: string }[] = [];
   @Input() intervalUnitOptions: { value: IntervalUnit; label: string }[] = [];
   @Input() weekdayOptions: string[] = [];
@@ -51,10 +52,21 @@ export class TaskCreateFormComponent {
     this.newTaskStartDate = this.dateFormat.toIsoDate();
   }
 
-  onCreateTask(): void {
-    if (!this.newTaskCategoryId && this.availableCategories.length > 0) {
-      this.newTaskCategoryId = this.availableCategories[0].id;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['availableCategories']) {
+      this.initializeSelectedCategory();
     }
+
+    if (
+      changes['taskCreateSuccessCount']
+      && !changes['taskCreateSuccessCount'].firstChange
+    ) {
+      this.resetTaskForm();
+    }
+  }
+
+  onCreateTask(): void {
+    this.initializeSelectedCategory();
 
     if (!this.validateTaskForm()) {
       this.validationError.emit('Please fix the highlighted fields.');
@@ -62,7 +74,6 @@ export class TaskCreateFormComponent {
     }
 
     this.createTask.emit(this.buildCreateTaskRequest());
-    this.resetTaskForm();
   }
 
   private validateTaskForm(): boolean {
@@ -157,6 +168,7 @@ export class TaskCreateFormComponent {
   }
 
   private resetTaskForm(): void {
+    this.fieldErrors = {};
     this.newTaskName = '';
     this.newTaskDescription = '';
     this.newTaskFixedDatesText = '';
@@ -165,5 +177,15 @@ export class TaskCreateFormComponent {
     this.intervalUnit = 'WEEKS';
     this.weekday = 'FRIDAY';
     this.weekOfMonth = 'LAST';
+    this.initializeSelectedCategory();
+  }
+
+  private initializeSelectedCategory(): void {
+    if (
+      this.availableCategories.length > 0
+      && !this.availableCategories.some(category => category.id === this.newTaskCategoryId)
+    ) {
+      this.newTaskCategoryId = this.availableCategories[0].id;
+    }
   }
 }

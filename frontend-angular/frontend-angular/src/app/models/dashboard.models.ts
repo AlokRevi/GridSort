@@ -64,9 +64,9 @@ export interface ChecklistItem {
   taskName: string;
   categoryId: number;
   categoryName: string;
-  categoryColor: string;
-  categoryRequires: CategoryRequires;
-  categoryFeelsLike: FeelsLikeLabel[];
+  categoryColor?: string;
+  categoryRequires?: CategoryRequires;
+  categoryFeelsLike?: FeelsLikeLabel[];
   occurrenceDate: string;
   status: 'DUE_TODAY' | 'OVERDUE' | 'COMPLETED';
 }

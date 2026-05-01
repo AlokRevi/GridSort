@@ -19,7 +19,7 @@
         Category
         <select [(ngModel)]="newTaskCategoryId">
           @for (category of availableCategories; track category.id) {
-          <option [value]="category.id">{{ category.name }}</option>
+          <option [ngValue]="category.id">{{ category.name }}</option>
           }
         </select>
         @if (fieldErrors['taskCategory']) {

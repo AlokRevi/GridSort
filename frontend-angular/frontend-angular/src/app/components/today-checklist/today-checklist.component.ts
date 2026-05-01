@@ -62,7 +62,7 @@ export class TodayChecklistComponent {
       .map(requires => ({
         requires,
         label: this.groupLabels[requires],
-        items: this.sortItems(items.filter(item => item.categoryRequires === requires))
+        items: this.sortItems(items.filter(item => this.getRequires(item) === requires))
       }))
       .filter(group => group.items.length > 0);
   }
@@ -88,6 +88,10 @@ export class TodayChecklistComponent {
 
   trackByGroup(index: number, group: ChecklistGroup): CategoryRequires {
     return group.requires;
+  }
+
+  getCategoryColor(item: ChecklistItem): string {
+    return item.categoryColor || '#94a3b8';
   }
 
   private sortItems(items: ChecklistItem[]): ChecklistItem[] {
@@ -118,5 +122,9 @@ export class TodayChecklistComponent {
     }
 
     return 2;
+  }
+
+  private getRequires(item: ChecklistItem): CategoryRequires {
+    return item.categoryRequires ?? 'FOCUS';
   }
 }
