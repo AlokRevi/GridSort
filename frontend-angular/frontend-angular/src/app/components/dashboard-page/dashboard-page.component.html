@@ -72,6 +72,18 @@
       class="setup-import-input"
       accept="application/json,.json"
       (change)="state.previewSetupImportFile($event)" />
+
+    <label class="theme-selector">
+      <span>Theme</span>
+      <select
+        [value]="themeService.activeTheme()"
+        (change)="onThemeChange($event)"
+        aria-label="Theme">
+        @for (theme of themeOptions; track theme.id) {
+        <option [value]="theme.id">{{ theme.label }}</option>
+        }
+      </select>
+    </label>
   </section>
 
   @if (state.setupImportPreview(); as preview) {

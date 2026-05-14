@@ -177,6 +177,28 @@ h1 {
   display: none;
 }
 
+.theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.theme-selector select {
+  min-width: 145px;
+  border: 1px solid var(--border-muted);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: var(--surface-panel);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .setup-import-preview {
   margin-bottom: 14px;
   background: var(--surface-panel);
@@ -419,8 +441,15 @@ h1 {
   }
 
   .quick-action-button,
-  .screen-close-button {
+  .screen-close-button,
+  .theme-selector select {
     width: 100%;
+  }
+
+  .theme-selector {
+    align-items: stretch;
+    flex-direction: column;
+    margin-left: 0;
   }
 
   .task-create-screen-header,

@@ -22,6 +22,12 @@ import {
   WEEKDAY_OPTIONS
 } from './dashboard-page.config';
 import { DashboardPageStateService } from './dashboard-page-state.service';
+import { ThemeId, ThemeService } from '../../services/theme.service';
+
+interface ThemeOption {
+  id: ThemeId;
+  label: string;
+}
 
 @Component({
   selector: 'app-dashboard-page',
@@ -48,10 +54,26 @@ export class DashboardPageComponent implements OnInit {
   protected readonly intervalUnitOptions = INTERVAL_UNIT_OPTIONS;
   protected readonly weekdayOptions = WEEKDAY_OPTIONS;
   protected readonly weekOfMonthOptions = WEEK_OF_MONTH_OPTIONS;
+  protected readonly themeOptions: ThemeOption[] = [
+    { id: 'theme-default', label: 'Default' },
+    { id: 'theme-solar-punk', label: 'Solar Punk' },
+    { id: 'theme-cyberpunk', label: 'Cyberpunk' },
+    { id: 'theme-space-sci-fi', label: 'Space Sci-Fi' },
+    { id: 'theme-matrix-coder', label: 'Matrix Coder' }
+  ];
 
-  constructor(protected state: DashboardPageStateService) {}
+  constructor(
+    protected state: DashboardPageStateService,
+    protected themeService: ThemeService
+  ) {}
 
   ngOnInit(): void {
     this.state.loadDashboard();
+  }
+
+  protected onThemeChange(event: Event): void {
+    const selectedTheme = (event.target as HTMLSelectElement).value as ThemeId;
+
+    this.themeService.setTheme(selectedTheme);
   }
 }
