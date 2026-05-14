@@ -12,7 +12,8 @@ import {
   CreateTaskRequest,
   UpdateCategoryRequest,
   UpdateTaskRequest,
-  TaskResponse
+  TaskResponse,
+  SetupSnapshotResponse
 } from '../models/dashboard.models';
 
 @Injectable({
@@ -38,6 +39,12 @@ export class DashboardApiService {
   getCategories(): Observable<CategoryResponse[]> {
     return this.http.get<CategoryResponse[]>(
       `${this.apiBase}/categories`
+    );
+  }
+
+  getSetupSnapshot(): Observable<SetupSnapshotResponse> {
+    return this.http.get<SetupSnapshotResponse>(
+      `${this.apiBase}/export/setup`
     );
   }
 

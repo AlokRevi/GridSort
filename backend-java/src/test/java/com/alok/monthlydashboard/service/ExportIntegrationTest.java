@@ -94,6 +94,33 @@ class ExportIntegrationTest {
                 .andExpect(jsonPath("$.completionHistory[0].completionDate").value("2026-04-16"));
     }
 
+    @Test
+    void exportsSetupSnapshotWithoutCompletionHistory() throws Exception {
+        mockMvc.perform(get("/api/v1/export/setup"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value("v2-setup-snapshot"))
+                .andExpect(jsonPath("$.exportedAt").exists())
+                .andExpect(jsonPath("$.categories", hasSize(1)))
+                .andExpect(jsonPath("$.categories[0].id").value(category.getId()))
+                .andExpect(jsonPath("$.categories[0].name").value("Home"))
+                .andExpect(jsonPath("$.categories[0].color").value("#2563eb"))
+                .andExpect(jsonPath("$.categories[0].requires").value("FOCUS"))
+                .andExpect(jsonPath("$.categories[0].taskCount").value(1))
+                .andExpect(jsonPath("$.tasks", hasSize(1)))
+                .andExpect(jsonPath("$.tasks[0].id").value(task.getId()))
+                .andExpect(jsonPath("$.tasks[0].categoryId").value(category.getId()))
+                .andExpect(jsonPath("$.tasks[0].categoryName").value("Home"))
+                .andExpect(jsonPath("$.tasks[0].name").value("Flowers"))
+                .andExpect(jsonPath("$.tasks[0].description").value("Water flowers"))
+                .andExpect(jsonPath("$.tasks[0].recurrenceType").value("FIXED_DATE"))
+                .andExpect(jsonPath("$.tasks[0].startDate").value("2026-04-01"))
+                .andExpect(jsonPath("$.tasks[0].isActive").value(true))
+                .andExpect(jsonPath("$.tasks[0].rule.fixedDates", hasSize(1)))
+                .andExpect(jsonPath("$.tasks[0].rule.fixedDates[0]").value(15))
+                .andExpect(jsonPath("$.tasks[0].rule.fallbackToLastDay").value(true))
+                .andExpect(jsonPath("$.completionHistory").doesNotExist());
+    }
+
     private Task fixedDateTask() {
         Task createdTask = new Task();
         createdTask.setCategory(category);

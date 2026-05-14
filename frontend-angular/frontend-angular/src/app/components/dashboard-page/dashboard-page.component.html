@@ -50,6 +50,13 @@
       (click)="state.openCategoryCreateDialog()">
       Add Category
     </button>
+
+    <button
+      type="button"
+      class="quick-action-button export-action"
+      (click)="state.exportSetupSnapshot()">
+      Export Setup
+    </button>
   </section>
 
   @if (state.taskCreateScreenOpen()) {

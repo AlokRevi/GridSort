@@ -198,3 +198,49 @@ export interface TaskResponse {
   effortOverride?: FeelsLikeLabel | null;
   rule?: TaskRuleRequest;
 }
+
+// -------------------------------
+// Setup export models
+// -------------------------------
+
+export interface SetupSnapshotResponse {
+  exportedAt: string;
+  version: 'v2-setup-snapshot';
+  categories: SetupSnapshotCategory[];
+  tasks: SetupSnapshotTask[];
+}
+
+export interface SetupSnapshotCategory {
+  id: number;
+  name: string;
+  color: string;
+  requires: CategoryRequires;
+  feelsLike: FeelsLikeLabel[];
+  taskCount: number;
+}
+
+export interface SetupSnapshotTask {
+  id: number;
+  categoryId: number;
+  categoryName: string;
+  name: string;
+  description: string;
+  recurrenceType: RecurrenceType;
+  startDate: string;
+  endDate: string | null;
+  isActive: boolean;
+  energyOverride?: FeelsLikeLabel | null;
+  enjoymentOverride?: FeelsLikeLabel | null;
+  pressureOverride?: FeelsLikeLabel | null;
+  effortOverride?: FeelsLikeLabel | null;
+  rule: SetupSnapshotRule;
+}
+
+export interface SetupSnapshotRule {
+  fixedDates: number[];
+  fallbackToLastDay: boolean | null;
+  intervalValue: number | null;
+  intervalUnit: IntervalUnit | null;
+  weekday: string | null;
+  weekOfMonth: WeekOfMonth | null;
+}

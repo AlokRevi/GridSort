@@ -1,6 +1,7 @@
 package com.alok.monthlydashboard.controller;
 
 import com.alok.monthlydashboard.dto.export.SystemExportResponse;
+import com.alok.monthlydashboard.dto.export.SetupSnapshotResponse;
 import com.alok.monthlydashboard.service.ExportService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,5 +20,10 @@ public class ExportController {
     @GetMapping
     public SystemExportResponse exportSystemState() {
         return exportService.exportSystemState();
+    }
+
+    @GetMapping("/setup")
+    public SetupSnapshotResponse exportSetupSnapshot() {
+        return exportService.exportSetupSnapshot();
     }
 }

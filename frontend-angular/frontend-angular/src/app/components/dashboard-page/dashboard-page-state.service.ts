@@ -285,6 +285,19 @@ export class DashboardPageStateService {
     });
   }
 
+  exportSetupSnapshot(): void {
+    this.dashboardApi.getSetupSnapshot().subscribe({
+      next: (snapshot) => {
+        this.downloadJsonSnapshot(snapshot);
+        this.showSuccess('Setup snapshot exported.');
+      },
+      error: (error) => {
+        console.error('Export setup snapshot failed:', error);
+        this.showError('Could not export setup snapshot.');
+      }
+    });
+  }
+
   deleteTask(taskId: number): void {
     const confirmed = confirm('Delete this task?');
 
@@ -372,5 +385,20 @@ export class DashboardPageStateService {
     }
 
     return `${prefix}.`;
+  }
+
+  private downloadJsonSnapshot(snapshot: unknown): void {
+    const today = this.dateFormat.toIsoDate();
+    const fileName = `monthly-dashboard-setup-snapshot-${today}.json`;
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
+      type: 'application/json'
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+
+    anchor.href = url;
+    anchor.download = fileName;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 }
