@@ -10,7 +10,11 @@ import {
   TaskResponse,
   TodayChecklistResponse,
   UpdateCategoryRequest,
-  UpdateTaskRequest
+  UpdateTaskRequest,
+  ScaleNumbering,
+  StartOfWeek,
+  TimelineView,
+  ViewSettings
 } from '../../models/dashboard.models';
 import { DashboardApiService } from '../../services/dashboard-api.service';
 import { DateFormatService } from '../../services/date-format.service';
@@ -19,6 +23,12 @@ import { DateFormatService } from '../../services/date-format.service';
 export class DashboardPageStateService {
   selectedYear = signal(new Date().getFullYear());
   selectedMonth = signal(new Date().getMonth() + 1);
+  viewSettings = signal<ViewSettings>({
+    view: 'MONTH',
+    startOfWeek: 'SUNDAY',
+    scaleNumbering: 'SEGMENT',
+    calendarYearBound: true
+  });
 
   dashboard = signal<MonthlyDashboardResponse | null>(null);
   checklist = signal<TodayChecklistResponse | null>(null);
@@ -96,6 +106,34 @@ export class DashboardPageStateService {
 
   setSelectedMonth(month: number): void {
     this.selectedMonth.set(month);
+  }
+
+  setTimelineView(view: TimelineView): void {
+    this.viewSettings.update(settings => ({
+      ...settings,
+      view
+    }));
+  }
+
+  setStartOfWeek(startOfWeek: StartOfWeek): void {
+    this.viewSettings.update(settings => ({
+      ...settings,
+      startOfWeek
+    }));
+  }
+
+  setScaleNumbering(scaleNumbering: ScaleNumbering): void {
+    this.viewSettings.update(settings => ({
+      ...settings,
+      scaleNumbering
+    }));
+  }
+
+  setCalendarYearBound(calendarYearBound: boolean): void {
+    this.viewSettings.update(settings => ({
+      ...settings,
+      calendarYearBound
+    }));
   }
 
   goToPreviousMonth(): void {

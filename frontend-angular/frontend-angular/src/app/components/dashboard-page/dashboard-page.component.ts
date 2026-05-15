@@ -23,9 +23,19 @@ import {
 } from './dashboard-page.config';
 import { DashboardPageStateService } from './dashboard-page-state.service';
 import { ThemeId, ThemeService } from '../../services/theme.service';
+import {
+  ScaleNumbering,
+  StartOfWeek,
+  TimelineView
+} from '../../models/dashboard.models';
 
 interface ThemeOption {
   id: ThemeId;
+  label: string;
+}
+
+interface ViewSettingOption<TValue extends string> {
+  value: TValue;
   label: string;
 }
 
@@ -61,6 +71,21 @@ export class DashboardPageComponent implements OnInit {
     { id: 'theme-space-sci-fi', label: 'Space Sci-Fi' },
     { id: 'theme-matrix-coder', label: 'Matrix Coder' }
   ];
+  protected readonly timelineViewOptions: ViewSettingOption<TimelineView>[] = [
+    { value: 'MONTH', label: 'Month' },
+    { value: 'QUARTER', label: 'Quarter' },
+    { value: 'QUADRIMESTER', label: 'Quadrimester' },
+    { value: 'HALF_YEAR', label: 'HalfYear' },
+    { value: 'YEAR', label: 'Year' }
+  ];
+  protected readonly startOfWeekOptions: ViewSettingOption<StartOfWeek>[] = [
+    { value: 'SUNDAY', label: 'Sunday' },
+    { value: 'MONDAY', label: 'Monday' }
+  ];
+  protected readonly scaleNumberingOptions: ViewSettingOption<ScaleNumbering>[] = [
+    { value: 'SEGMENT', label: 'Segment' },
+    { value: 'CONTINUED', label: 'Continued' }
+  ];
 
   constructor(
     protected state: DashboardPageStateService,
@@ -75,5 +100,21 @@ export class DashboardPageComponent implements OnInit {
     const selectedTheme = (event.target as HTMLSelectElement).value as ThemeId;
 
     this.themeService.setTheme(selectedTheme);
+  }
+
+  protected onTimelineViewChange(event: Event): void {
+    this.state.setTimelineView((event.target as HTMLSelectElement).value as TimelineView);
+  }
+
+  protected onStartOfWeekChange(event: Event): void {
+    this.state.setStartOfWeek((event.target as HTMLSelectElement).value as StartOfWeek);
+  }
+
+  protected onScaleNumberingChange(event: Event): void {
+    this.state.setScaleNumbering((event.target as HTMLSelectElement).value as ScaleNumbering);
+  }
+
+  protected onCalendarYearBoundChange(event: Event): void {
+    this.state.setCalendarYearBound((event.target as HTMLInputElement).checked);
   }
 }
