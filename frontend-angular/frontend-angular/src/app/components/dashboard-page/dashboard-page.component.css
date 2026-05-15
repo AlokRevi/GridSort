@@ -335,6 +335,52 @@ h1 {
   font-size: 13px;
 }
 
+.view-settings {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 900px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--surface-subtle);
+  padding: 9px 12px;
+  margin-bottom: 8px;
+}
+
+.view-settings-title {
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.view-settings label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.view-settings select {
+  min-width: 108px;
+  border: 1px solid var(--border-muted);
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: var(--surface-panel);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.calendar-bound-toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--accent);
+}
+
 /* =========================================
    LEGEND AND EMPTY STATES
 ========================================= */
@@ -430,6 +476,7 @@ h1 {
   }
 
   .quick-actions-panel,
+  .view-settings,
   .task-create-screen,
   .setup-import-preview {
     order: 2;
@@ -450,6 +497,17 @@ h1 {
     align-items: stretch;
     flex-direction: column;
     margin-left: 0;
+  }
+
+  .view-settings {
+    min-width: 0;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .view-settings label {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .task-create-screen-header,

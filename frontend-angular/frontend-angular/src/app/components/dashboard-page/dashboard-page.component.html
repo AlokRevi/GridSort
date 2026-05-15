@@ -203,8 +203,56 @@
       <div class="card">
         <div class="section-header">
           <h2>{{ dashboard.monthLabel }}</h2>
-          <p>Fixed monthly timeline with visible occurrences</p>
+          <p>Task Grid with visible monthly occurrences</p>
         </div>
+
+        <section class="view-settings" aria-label="View Settings">
+          <span class="view-settings-title">View Settings</span>
+
+          <label>
+            <span>View</span>
+            <select
+              [value]="state.viewSettings().view"
+              (change)="onTimelineViewChange($event)"
+              aria-label="View">
+              @for (option of timelineViewOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Start of Week</span>
+            <select
+              [value]="state.viewSettings().startOfWeek"
+              (change)="onStartOfWeekChange($event)"
+              aria-label="Start of Week">
+              @for (option of startOfWeekOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Scale Numbering</span>
+            <select
+              [value]="state.viewSettings().scaleNumbering"
+              (change)="onScaleNumberingChange($event)"
+              aria-label="Scale Numbering">
+              @for (option of scaleNumberingOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="calendar-bound-toggle">
+            <input
+              type="checkbox"
+              [checked]="state.viewSettings().calendarYearBound"
+              (change)="onCalendarYearBoundChange($event)" />
+            <span>Calendar Year Bound</span>
+          </label>
+        </section>
 
         <app-timeline-strip
           [dayStrip]="dashboard.dayStrip"

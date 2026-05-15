@@ -13,6 +13,17 @@ export interface MonthlyDashboardResponse {
   categories: DashboardCategory[];
 }
 
+export type TimelineView = 'MONTH' | 'QUARTER' | 'QUADRIMESTER' | 'HALF_YEAR' | 'YEAR';
+export type StartOfWeek = 'SUNDAY' | 'MONDAY';
+export type ScaleNumbering = 'SEGMENT' | 'CONTINUED';
+
+export interface ViewSettings {
+  view: TimelineView;
+  startOfWeek: StartOfWeek;
+  scaleNumbering: ScaleNumbering;
+  calendarYearBound: boolean;
+}
+
 export interface ScaleBar {
   anchors: number[];
   lastDay: number;
