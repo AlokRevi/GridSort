@@ -254,6 +254,7 @@
           </label>
         </section>
 
+        @if (state.viewSettings().view === 'MONTH') {
         <app-timeline-strip
           [dayStrip]="dashboard.dayStrip"
           [scaleBar]="dashboard.scaleBar">
@@ -281,6 +282,30 @@
           (editTask)="state.openEditTaskModal($event)"
           (editCategory)="state.openCategoryEditDialog($event)">
         </app-category-section>
+        }
+        } @else if (state.viewSettings().view === 'QUARTER') {
+        <section class="quarter-timeline-panel">
+          @if (state.quarterTimelineLoading()) {
+          <p class="loading">Loading Quarter timeline...</p>
+          } @else if (state.quarterTimelineError()) {
+          <p class="error">{{ state.quarterTimelineError() }}</p>
+          } @else if (state.quarterTimelineDashboard(); as quarter) {
+          <app-quarter-timeline-grid
+            [dashboard]="quarter"
+            [categories]="state.visibleQuarterCategories()">
+          </app-quarter-timeline-grid>
+          } @else {
+          <div class="empty-dashboard-state">
+            <strong>Quarter timeline not loaded.</strong>
+            <p>Select Quarter again or reload the dashboard.</p>
+          </div>
+          }
+        </section>
+        } @else {
+        <div class="empty-dashboard-state">
+          <strong>{{ state.viewSettings().view }} is not available yet.</strong>
+          <p>Only Month and Quarter are wired in this frontend branch.</p>
+        </div>
         }
       </div>
       }

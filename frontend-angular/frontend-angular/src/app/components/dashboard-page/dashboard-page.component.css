@@ -381,6 +381,15 @@ h1 {
   accent-color: var(--accent);
 }
 
+.quarter-timeline-panel {
+  min-width: 900px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: var(--surface-subtle);
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
 /* =========================================
    LEGEND AND EMPTY STATES
 ========================================= */

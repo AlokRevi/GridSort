@@ -14,6 +14,7 @@ import { TaskEditModalComponent } from '../task-edit-modal/task-edit-modal.compo
 import { CategoryManagerComponent } from '../category-manager/category-manager.component';
 import { MonthNavigationComponent } from '../month-navigation/month-navigation.component';
 import { CategoryCreateDialogComponent } from '../category-create-dialog/category-create-dialog.component';
+import { QuarterTimelineGridComponent } from '../quarter-timeline-grid/quarter-timeline-grid.component';
 import {
   INTERVAL_UNIT_OPTIONS,
   MONTH_OPTIONS,
@@ -51,7 +52,8 @@ interface ViewSettingOption<TValue extends string> {
     TaskEditModalComponent,
     CategoryManagerComponent,
     CategoryCreateDialogComponent,
-    MonthNavigationComponent
+    MonthNavigationComponent,
+    QuarterTimelineGridComponent
   ],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.css',
