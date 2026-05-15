@@ -33,10 +33,13 @@ export class DashboardPageStateService {
 
   dashboard = signal<MonthlyDashboardResponse | null>(null);
   monthTimelineDashboard = signal<TimelineDashboardResponse | null>(null);
+  quarterTimelineDashboard = signal<TimelineDashboardResponse | null>(null);
   checklist = signal<TodayChecklistResponse | null>(null);
   availableCategories = signal<CategoryResponse[]>([]);
 
   loading = signal(false);
+  quarterTimelineLoading = signal(false);
+  quarterTimelineError = signal('');
   errorMessage = signal('');
   successMessage = signal('');
   taskSaving = signal(false);
@@ -68,6 +71,17 @@ export class DashboardPageStateService {
 
   visibleDashboardCategories = computed(() =>
     this.dashboard()?.categories.filter(category => category.tasks.length > 0) ?? []
+  );
+
+  visibleQuarterCategories = computed(() =>
+    this.quarterTimelineDashboard()?.categories
+      .map(category => ({
+        ...category,
+        tasks: category.tasks.filter(task =>
+          task.buckets.some(bucket => bucket.totalOccurrences > 0)
+        )
+      }))
+      .filter(category => category.tasks.length > 0) ?? []
   );
 
   constructor(
@@ -119,6 +133,10 @@ export class DashboardPageStateService {
       ...settings,
       view
     }));
+
+    if (view === 'QUARTER') {
+      this.loadQuarterTimelineDashboard();
+    }
   }
 
   setStartOfWeek(startOfWeek: StartOfWeek): void {
@@ -126,6 +144,7 @@ export class DashboardPageStateService {
       ...settings,
       startOfWeek
     }));
+    this.reloadQuarterTimelineIfActive();
   }
 
   setScaleNumbering(scaleNumbering: ScaleNumbering): void {
@@ -133,6 +152,7 @@ export class DashboardPageStateService {
       ...settings,
       scaleNumbering
     }));
+    this.reloadQuarterTimelineIfActive();
   }
 
   setCalendarYearBound(calendarYearBound: boolean): void {
@@ -140,6 +160,25 @@ export class DashboardPageStateService {
       ...settings,
       calendarYearBound
     }));
+    this.reloadQuarterTimelineIfActive();
+  }
+
+  loadQuarterTimelineDashboard(): void {
+    this.quarterTimelineLoading.set(true);
+    this.quarterTimelineError.set('');
+
+    this.dashboardApi.getTimelineDashboard('QUARTER', this.viewSettings()).subscribe({
+      next: (dashboard) => {
+        this.quarterTimelineDashboard.set(dashboard);
+        this.quarterTimelineLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Quarter timeline load failed:', error);
+        this.quarterTimelineDashboard.set(null);
+        this.quarterTimelineLoading.set(false);
+        this.quarterTimelineError.set('Could not load Quarter timeline.');
+      }
+    });
   }
 
   goToPreviousMonth(): void {
@@ -151,6 +190,12 @@ export class DashboardPageStateService {
     }
 
     this.loadDashboard();
+  }
+
+  private reloadQuarterTimelineIfActive(): void {
+    if (this.viewSettings().view === 'QUARTER') {
+      this.loadQuarterTimelineDashboard();
+    }
   }
 
   goToNextMonth(): void {

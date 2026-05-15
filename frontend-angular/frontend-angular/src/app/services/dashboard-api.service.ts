@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -16,7 +16,9 @@ import {
   SetupImportPreviewResponse,
   SetupImportResultResponse,
   SetupSnapshotResponse,
-  TimelineDashboardResponse
+  TimelineDashboardResponse,
+  TimelineView,
+  ViewSettings
 } from '../models/dashboard.models';
 
 @Injectable({
@@ -34,8 +36,30 @@ export class DashboardApiService {
   }
 
   getMonthTimelineDashboard(): Observable<TimelineDashboardResponse> {
+    return this.getTimelineDashboard('MONTH');
+  }
+
+  getTimelineDashboard(
+    view: TimelineView,
+    settings?: Partial<ViewSettings>
+  ): Observable<TimelineDashboardResponse> {
+    let params = new HttpParams().set('view', view);
+
+    if (settings?.startOfWeek) {
+      params = params.set('startOfWeek', settings.startOfWeek);
+    }
+
+    if (settings?.scaleNumbering) {
+      params = params.set('scaleNumbering', settings.scaleNumbering);
+    }
+
+    if (settings?.calendarYearBound !== undefined) {
+      params = params.set('calendarYearBound', String(settings.calendarYearBound));
+    }
+
     return this.http.get<TimelineDashboardResponse>(
-      `${this.apiBase}/dashboard/timeline?view=MONTH`
+      `${this.apiBase}/dashboard/timeline`,
+      { params }
     );
   }
 

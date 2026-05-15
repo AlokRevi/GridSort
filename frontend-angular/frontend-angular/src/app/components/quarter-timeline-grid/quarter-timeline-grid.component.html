@@ -1,0 +1,77 @@
+@if (dashboard; as quarter) {
+<div class="quarter-header">
+  <div>
+    <h3>{{ quarter.label }}</h3>
+    <p>{{ quarter.startDate }} to {{ quarter.endDate }}</p>
+  </div>
+
+  <span class="quarter-readonly-badge">Read-only</span>
+</div>
+
+@if (categories.length === 0) {
+<div class="empty-quarter-state">
+  <strong>No Quarter task occurrences yet.</strong>
+  <p>Tasks with generated occurrences in this Quarter will appear here.</p>
+</div>
+} @else {
+<div
+  class="quarter-grid"
+  [style.grid-template-columns]="gridTemplateColumns">
+  <div class="quarter-grid-heading">Task Grid</div>
+
+  @for (cell of quarter.cells; track cell.key) {
+  <div
+    class="quarter-cell-heading"
+    [class.today]="cell.isToday"
+    [class.weekend]="cell.cellType === 'WEEKEND_BUCKET'"
+    [title]="cell.startDate + ' to ' + cell.endDate">
+    <span>{{ cell.label }}</span>
+    <small>{{ cell.secondaryLabel }}</small>
+  </div>
+  }
+
+  @for (category of categories; track category.categoryId) {
+  <div class="quarter-category-row">
+    <span
+      class="category-color-chip"
+      [style.background]="category.categoryColor">
+    </span>
+    {{ category.categoryName }}
+  </div>
+
+  @for (cell of quarter.cells; track cell.key) {
+  <div class="quarter-category-spacer"></div>
+  }
+
+  @for (task of category.tasks; track task.taskId) {
+  <div class="quarter-task-name">
+    <strong>{{ task.taskName }}</strong>
+    <span>{{ task.recurrenceSummary }}</span>
+  </div>
+
+  @for (cell of quarter.cells; track cell.key) {
+  @if (bucketForCell(task, cell); as bucket) {
+  <div
+    class="quarter-bucket"
+    [class.has-occurrences]="bucket.totalOccurrences > 0"
+    [class.completed]="bucket.totalOccurrences > 0 && bucket.completedOccurrences === bucket.totalOccurrences"
+    [class.weekend]="cell.cellType === 'WEEKEND_BUCKET'"
+    [title]="cell.startDate + ' to ' + cell.endDate">
+    @if (bucket.totalOccurrences > 0) {
+    {{ bucket.completionLabel }}
+    }
+  </div>
+  } @else {
+  <div class="quarter-bucket"></div>
+  }
+  }
+  }
+  }
+</div>
+}
+} @else {
+<div class="empty-quarter-state">
+  <strong>Quarter timeline not loaded.</strong>
+  <p>Select Quarter again or reload the dashboard.</p>
+</div>
+}
