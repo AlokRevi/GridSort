@@ -1,0 +1,85 @@
+@if (dashboard; as quadrimester) {
+<div class="quadrimester-header">
+  <div>
+    <h3>{{ quadrimester.label }}</h3>
+    <p>{{ quadrimester.startDate }} to {{ quadrimester.endDate }} · generated occurrence summary</p>
+  </div>
+
+  <span class="quadrimester-readonly-badge">Read-only view · completion changes stay in Month</span>
+</div>
+
+@if (categories.length === 0) {
+<div class="empty-quadrimester-state">
+  <strong>No Quadrimester task occurrences yet.</strong>
+  <p>Tasks with generated occurrences in this Quadrimester will appear here.</p>
+</div>
+} @else {
+<div
+  class="quadrimester-grid"
+  [style.grid-template-columns]="gridTemplateColumns">
+  <div class="quadrimester-grid-heading">Task Grid</div>
+
+  @for (cell of quadrimester.cells; track cell.key) {
+  <div
+    class="quadrimester-cell-heading"
+    [class.today]="cell.isToday"
+    [class.weekend]="cell.cellType === 'WEEKEND_BUCKET'"
+    [title]="cell.startDate + ' to ' + cell.endDate">
+    <span>{{ cell.label }}</span>
+    <small>{{ cellBucketLabel(cell) }}</small>
+  </div>
+  }
+
+  @for (category of categories; track category.categoryId) {
+  <div class="quadrimester-category-row">
+    <span
+      class="category-color-chip"
+      [style.background]="category.categoryColor">
+    </span>
+    {{ category.categoryName }}
+  </div>
+
+  @for (cell of quadrimester.cells; track cell.key) {
+  <div class="quadrimester-category-spacer"></div>
+  }
+
+  @for (task of category.tasks; track task.taskId) {
+  <div
+    class="quadrimester-task-name"
+    [class.no-visible-occurrences]="!hasOccurrences(task)">
+    <strong>{{ task.taskName }}</strong>
+    @if (hasOccurrences(task)) {
+    <span>{{ task.recurrenceSummary }}</span>
+    } @else {
+    <span>No occurrences in this quadrimester</span>
+    }
+  </div>
+
+  @for (cell of quadrimester.cells; track cell.key) {
+  @if (bucketForCell(task, cell); as bucket) {
+  <div
+    class="quadrimester-bucket"
+    [class.has-occurrences]="bucket.totalOccurrences > 0"
+    [class.completed]="bucket.totalOccurrences > 0 && bucket.completedOccurrences === bucket.totalOccurrences"
+    [class.weekend]="cell.cellType === 'WEEKEND_BUCKET'"
+    [title]="bucketAccessibleLabel(bucket, cell)"
+    [attr.aria-label]="bucketAccessibleLabel(bucket, cell)">
+    @if (bucket.totalOccurrences > 0) {
+    <span class="bucket-count">{{ bucket.completionLabel }}</span>
+    <small>done</small>
+    }
+  </div>
+  } @else {
+  <div class="quadrimester-bucket"></div>
+  }
+  }
+  }
+  }
+</div>
+}
+} @else {
+<div class="empty-quadrimester-state">
+  <strong>Quadrimester timeline not loaded.</strong>
+  <p>Select Quadrimester again or reload the dashboard.</p>
+</div>
+}
