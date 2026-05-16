@@ -34,12 +34,15 @@ export class DashboardPageStateService {
   dashboard = signal<MonthlyDashboardResponse | null>(null);
   monthTimelineDashboard = signal<TimelineDashboardResponse | null>(null);
   quarterTimelineDashboard = signal<TimelineDashboardResponse | null>(null);
+  quadrimesterTimelineDashboard = signal<TimelineDashboardResponse | null>(null);
   checklist = signal<TodayChecklistResponse | null>(null);
   availableCategories = signal<CategoryResponse[]>([]);
 
   loading = signal(false);
   quarterTimelineLoading = signal(false);
   quarterTimelineError = signal('');
+  quadrimesterTimelineLoading = signal(false);
+  quadrimesterTimelineError = signal('');
   errorMessage = signal('');
   successMessage = signal('');
   taskSaving = signal(false);
@@ -75,6 +78,11 @@ export class DashboardPageStateService {
 
   visibleQuarterCategories = computed(() =>
     this.quarterTimelineDashboard()?.categories
+      .filter(category => category.tasks.length > 0) ?? []
+  );
+
+  visibleQuadrimesterCategories = computed(() =>
+    this.quadrimesterTimelineDashboard()?.categories
       .filter(category => category.tasks.length > 0) ?? []
   );
 
@@ -131,6 +139,10 @@ export class DashboardPageStateService {
     if (view === 'QUARTER') {
       this.loadQuarterTimelineDashboard();
     }
+
+    if (view === 'QUADRIMESTER') {
+      this.loadQuadrimesterTimelineDashboard();
+    }
   }
 
   setStartOfWeek(startOfWeek: StartOfWeek): void {
@@ -138,7 +150,7 @@ export class DashboardPageStateService {
       ...settings,
       startOfWeek
     }));
-    this.reloadQuarterTimelineIfActive();
+    this.reloadBucketTimelineIfActive();
   }
 
   setScaleNumbering(scaleNumbering: ScaleNumbering): void {
@@ -146,7 +158,7 @@ export class DashboardPageStateService {
       ...settings,
       scaleNumbering
     }));
-    this.reloadQuarterTimelineIfActive();
+    this.reloadBucketTimelineIfActive();
   }
 
   setCalendarYearBound(calendarYearBound: boolean): void {
@@ -154,7 +166,7 @@ export class DashboardPageStateService {
       ...settings,
       calendarYearBound
     }));
-    this.reloadQuarterTimelineIfActive();
+    this.reloadBucketTimelineIfActive();
   }
 
   loadQuarterTimelineDashboard(): void {
@@ -175,6 +187,24 @@ export class DashboardPageStateService {
     });
   }
 
+  loadQuadrimesterTimelineDashboard(): void {
+    this.quadrimesterTimelineLoading.set(true);
+    this.quadrimesterTimelineError.set('');
+
+    this.dashboardApi.getTimelineDashboard('QUADRIMESTER', this.viewSettings()).subscribe({
+      next: (dashboard) => {
+        this.quadrimesterTimelineDashboard.set(dashboard);
+        this.quadrimesterTimelineLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Quadrimester timeline load failed:', error);
+        this.quadrimesterTimelineDashboard.set(null);
+        this.quadrimesterTimelineLoading.set(false);
+        this.quadrimesterTimelineError.set('Could not load Quadrimester timeline.');
+      }
+    });
+  }
+
   goToPreviousMonth(): void {
     if (this.selectedMonth() === 1) {
       this.selectedMonth.set(12);
@@ -186,9 +216,13 @@ export class DashboardPageStateService {
     this.loadDashboard();
   }
 
-  private reloadQuarterTimelineIfActive(): void {
+  private reloadBucketTimelineIfActive(): void {
     if (this.viewSettings().view === 'QUARTER') {
       this.loadQuarterTimelineDashboard();
+    }
+
+    if (this.viewSettings().view === 'QUADRIMESTER') {
+      this.loadQuadrimesterTimelineDashboard();
     }
   }
 
