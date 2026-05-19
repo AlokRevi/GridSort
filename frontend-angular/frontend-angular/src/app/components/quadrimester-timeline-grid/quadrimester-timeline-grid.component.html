@@ -2,10 +2,13 @@
 <div class="quadrimester-header">
   <div>
     <h3>{{ quadrimester.label }}</h3>
-    <p>{{ quadrimester.startDate }} to {{ quadrimester.endDate }} · generated occurrence summary</p>
+    <p>{{ quadrimester.startDate }} to {{ quadrimester.endDate }} · weekday/weekend occurrence buckets</p>
   </div>
 
-  <span class="quadrimester-readonly-badge">Read-only view · completion changes stay in Month</span>
+  <div class="quadrimester-readonly-badge">
+    <strong>Read-only</strong>
+    <span>Completion changes stay in Month View</span>
+  </div>
 </div>
 
 @if (categories.length === 0) {
@@ -27,6 +30,7 @@
     [title]="cell.startDate + ' to ' + cell.endDate">
     <span>{{ cell.label }}</span>
     <small>{{ cellBucketLabel(cell) }}</small>
+    <em>{{ cellBucketRangeLabel(cell) }}</em>
   </div>
   }
 
@@ -51,7 +55,7 @@
     @if (hasOccurrences(task)) {
     <span>{{ task.recurrenceSummary }}</span>
     } @else {
-    <span>No occurrences in this quadrimester</span>
+    <span>No generated occurrences in this visible Quadrimester</span>
     }
   </div>
 
@@ -66,7 +70,7 @@
     [attr.aria-label]="bucketAccessibleLabel(bucket, cell)">
     @if (bucket.totalOccurrences > 0) {
     <span class="bucket-count">{{ bucket.completionLabel }}</span>
-    <small>done</small>
+    <small>{{ bucketDetailLabel(bucket) }}</small>
     }
   </div>
   } @else {
