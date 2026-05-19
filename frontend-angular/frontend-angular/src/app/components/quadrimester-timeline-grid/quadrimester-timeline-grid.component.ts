@@ -48,6 +48,30 @@ export class QuadrimesterTimelineGridComponent {
     return cell.secondaryLabel || cell.label;
   }
 
+  cellBucketRangeLabel(cell: TimelineCellResponse): string {
+    if (cell.cellType === 'WEEKDAY_BUCKET') {
+      return 'Mon-Fri';
+    }
+
+    if (cell.cellType === 'WEEKEND_BUCKET') {
+      return 'Sat-Sun';
+    }
+
+    return cell.startDate === cell.endDate
+      ? cell.startDate
+      : `${cell.startDate} to ${cell.endDate}`;
+  }
+
+  bucketDetailLabel(bucket: TimelineOccurrenceBucketResponse): string {
+    const total = bucket.totalOccurrences;
+
+    if (total === 1) {
+      return '1 generated';
+    }
+
+    return `${total} generated`;
+  }
+
   bucketAccessibleLabel(
     bucket: TimelineOccurrenceBucketResponse,
     cell: TimelineCellResponse
