@@ -102,3 +102,304 @@ body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
+
+/* Dashboard-scoped utilities shared across dashboard child screens. */
+.dashboard-page .quick-actions-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.dashboard-page .quick-action-button,
+.dashboard-page .screen-close-button {
+  border: none;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.dashboard-page .quick-action-button:disabled,
+.dashboard-page .screen-close-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.dashboard-page .primary-action {
+  background: var(--success-action);
+  color: var(--text-inverse);
+}
+
+.dashboard-page .primary-action:hover {
+  background: var(--success-action-hover);
+}
+
+.dashboard-page .secondary-action,
+.dashboard-page .screen-close-button {
+  border: 1px solid var(--border-muted);
+  background: var(--surface-panel);
+  color: var(--occurrence-upcoming-text);
+}
+
+.dashboard-page .secondary-action:hover,
+.dashboard-page .screen-close-button:hover {
+  background: var(--surface-hover);
+}
+
+.dashboard-page .export-action {
+  border: 1px solid var(--border-muted);
+  background: var(--surface-subtle);
+  color: var(--occurrence-upcoming-text);
+}
+
+.dashboard-page .import-action {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+}
+
+.dashboard-page .export-action:hover {
+  background: var(--checklist-row-border);
+}
+
+.dashboard-page .import-action:hover {
+  background: var(--accent-softer);
+}
+
+.dashboard-page .setup-import-input {
+  display: none;
+}
+
+.dashboard-page .theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dashboard-page .theme-selector select {
+  min-width: 145px;
+  border: 1px solid var(--border-muted);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: var(--surface-panel);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-page .setup-import-preview {
+  margin-bottom: 14px;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.dashboard-page .setup-import-preview-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.dashboard-page .setup-import-preview-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.dashboard-page .setup-import-preview-header p {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.dashboard-page .setup-import-counts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.dashboard-page .setup-import-counts span {
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: var(--surface-subtle);
+  color: var(--occurrence-upcoming-text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dashboard-page .setup-import-message {
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.dashboard-page .setup-import-message strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.dashboard-page .setup-import-message p {
+  margin: 2px 0;
+}
+
+.dashboard-page .warning-message {
+  border: 1px solid var(--warning-border);
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.dashboard-page .error-message {
+  border: 1px solid var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.dashboard-page .task-create-screen {
+  margin-bottom: 14px;
+}
+
+.dashboard-page .task-create-screen-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.dashboard-page .task-create-screen-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.dashboard-page .task-create-screen-header p {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Month task-grid action controls, scoped to the category section only. */
+.category-section .icon-category-button {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.category-section .icon-category-button:hover {
+  background: var(--accent-softer);
+}
+
+.category-section .task-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.category-section .icon-task-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.category-section .edit-task-button,
+.category-section .delete-task-button {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.category-section .edit-task-button {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+}
+
+.category-section .delete-task-button {
+  border: 1px solid var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--danger-strong-text);
+}
+
+.category-section .edit-task-button:hover {
+  background: var(--accent-softer);
+}
+
+.category-section .delete-task-button:hover {
+  background: var(--weekend-sunday-bg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .category-section .task-row:hover .task-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.category-section .task-row-expanded .task-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 760px) {
+  .dashboard-page .quick-actions-panel,
+  .dashboard-page .task-create-screen,
+  .dashboard-page .setup-import-preview {
+    order: 2;
+  }
+
+  .dashboard-page .quick-actions-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dashboard-page .quick-action-button,
+  .dashboard-page .screen-close-button,
+  .dashboard-page .theme-selector select {
+    width: 100%;
+  }
+
+  .dashboard-page .theme-selector {
+    align-items: stretch;
+    flex-direction: column;
+    margin-left: 0;
+  }
+
+  .dashboard-page .task-create-screen-header,
+  .dashboard-page .setup-import-preview-header {
+    flex-direction: column;
+  }
+}

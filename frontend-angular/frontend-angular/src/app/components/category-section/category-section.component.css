@@ -40,22 +40,6 @@
   margin-bottom: 0;
 }
 
-.icon-category-button {
-  width: 26px;
-  height: 26px;
-  border: 1px solid var(--accent-border);
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent-hover);
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.icon-category-button:hover {
-  background: var(--accent-softer);
-}
-
 .task-row {
   display: grid;
   grid-template-columns: 170px 1fr;
@@ -92,76 +76,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-}
-
-/* Hidden action buttons by default */
-
-.task-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-}
-
-
-.icon-task-button {
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  padding: 0;
-  font-size: 14px;
-  line-height: 1;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-
-
-.edit-task-button,
-.delete-task-button {
-  width: fit-content;
-  border-radius: 999px;
-  padding: 3px 8px;
-  font-size: 11px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.edit-task-button {
-  border: 1px solid var(--accent-border);
-  background: var(--accent-soft);
-  color: var(--accent-hover);
-}
-
-
-.delete-task-button {
-  border: 1px solid var(--danger-border);
-  background: var(--danger-bg);
-  color: var(--danger-strong-text);
-}
-
-.edit-task-button:hover {
-  background: var(--accent-softer);
-}
-
-.delete-task-button:hover {
-  background: var(--weekend-sunday-bg);
-}
-
-/* Desktop: show action icons when hovering over the task row */
-@media (hover: hover) and (pointer: fine) {
-  .task-row:hover .task-actions {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-/* Mobile/touch: show action icons after tapping the task row */
-.task-row-expanded .task-actions {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .occurrence-grid-wrap {
