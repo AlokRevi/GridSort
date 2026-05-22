@@ -1,3 +1,10 @@
+# SSH keys - never commit
+/.ssh/
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+
 # Java / Maven build output
 target/
 backend-java/target/
@@ -15,6 +22,10 @@ frontend-angular/frontend-angular/.angular/
 **/.idea/
 .vscode/
 
+# IDE files
+.idea/
+*.iml
+
 # Local environment files
 .env
 .env.*
@@ -29,3 +40,10 @@ frontend-angular/frontend-angular/.angular/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Build outputs
+target/
+backend-java/target/
+frontend-angular/dist/
+frontend-angular/.angular/
+frontend-angular/node_modules/
