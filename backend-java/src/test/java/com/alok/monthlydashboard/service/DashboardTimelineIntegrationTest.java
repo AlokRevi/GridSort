@@ -51,6 +51,7 @@ class DashboardTimelineIntegrationTest {
     private AppDateProvider appDateProvider;
 
     private final LocalDate today = LocalDate.of(2026, 5, 15);
+    private Long savedTaskId;
 
     @BeforeEach
     void setUp() {
@@ -94,6 +95,7 @@ class DashboardTimelineIntegrationTest {
         task.addFixedDate(upcoming);
 
         Task savedTask = taskRepository.save(task);
+        savedTaskId = savedTask.getId();
 
         TaskCompletion completion = new TaskCompletion();
         completion.setTask(savedTask);
@@ -125,6 +127,18 @@ class DashboardTimelineIntegrationTest {
                 .andExpect(jsonPath("$.monthLabel").value("April 2026"))
                 .andExpect(jsonPath("$.readOnly").value(true))
                 .andExpect(jsonPath("$.dayStrip", hasSize(30)));
+    }
+
+    @Test
+    void taskHistoryEndpointReturnsPersistedCompletionHistory() throws Exception {
+        mockMvc.perform(get("/api/v1/tasks/{taskId}/history", savedTaskId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.taskId").value(savedTaskId))
+                .andExpect(jsonPath("$.taskName").value("Water Plants"))
+                .andExpect(jsonPath("$.history", hasSize(1)))
+                .andExpect(jsonPath("$.history[0].occurrenceDate").value("2026-05-15"))
+                .andExpect(jsonPath("$.history[0].completionDate").value("2026-05-15"))
+                .andExpect(jsonPath("$.history[0].status").value("COMPLETED"));
     }
 
     @Test
