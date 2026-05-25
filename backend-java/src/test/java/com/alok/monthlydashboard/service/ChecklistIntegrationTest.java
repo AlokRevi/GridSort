@@ -2,6 +2,7 @@ package com.alok.monthlydashboard.service;
 
 import com.alok.monthlydashboard.common.enums.OccurrenceStatus;
 import com.alok.monthlydashboard.common.enums.RecurrenceType;
+import com.alok.monthlydashboard.dto.checklist.CompleteTaskRequest;
 import com.alok.monthlydashboard.dto.checklist.TodayChecklistResponse;
 import com.alok.monthlydashboard.entity.Category;
 import com.alok.monthlydashboard.entity.Task;
@@ -110,6 +111,42 @@ class ChecklistIntegrationTest {
                     assertThat(item.taskName()).isEqualTo("Done Today");
                     assertThat(item.occurrenceDate()).isEqualTo(today);
                     assertThat(item.status()).isEqualTo(OccurrenceStatus.COMPLETED);
+                });
+    }
+
+    @Test
+    void completeTaskPersistsCompletionAndUndoCompletionRemovesIt() {
+        Task task = saveFixedDateTask("Complete Through Service", today, today.getDayOfMonth());
+
+        checklistService.completeTask(
+                task.getId(),
+                new CompleteTaskRequest(today, today)
+        );
+
+        assertThat(taskCompletionRepository.existsByTaskIdAndOccurrenceDate(task.getId(), today))
+                .isTrue();
+
+        TodayChecklistResponse completedChecklist = checklistService.getTodayChecklist();
+        assertThat(completedChecklist.items())
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.taskId()).isEqualTo(task.getId());
+                    assertThat(item.occurrenceDate()).isEqualTo(today);
+                    assertThat(item.status()).isEqualTo(OccurrenceStatus.COMPLETED);
+                });
+
+        checklistService.undoCompletion(task.getId(), today);
+
+        assertThat(taskCompletionRepository.existsByTaskIdAndOccurrenceDate(task.getId(), today))
+                .isFalse();
+
+        TodayChecklistResponse reopenedChecklist = checklistService.getTodayChecklist();
+        assertThat(reopenedChecklist.items())
+                .singleElement()
+                .satisfies(item -> {
+                    assertThat(item.taskId()).isEqualTo(task.getId());
+                    assertThat(item.occurrenceDate()).isEqualTo(today);
+                    assertThat(item.status()).isEqualTo(OccurrenceStatus.DUE_TODAY);
                 });
     }
 
